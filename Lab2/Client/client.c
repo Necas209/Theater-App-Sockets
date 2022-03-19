@@ -13,7 +13,7 @@ int main(int argc, char* argv[])
 	WSADATA wsa;
 	SOCKET s;
 	struct sockaddr_in server;
-	char* message, server_reply[2000];
+	char message[2000], server_reply[2000];
 	int recv_size;
 	int ws_result;
 
@@ -61,11 +61,8 @@ int main(int argc, char* argv[])
 	while (true)
 	{
 		// Send some data
-		char buffer[100];
 		printf("Message %i : ", i);
-		scanf("%[^\n]%*c", buffer);
-
-		message = buffer;
+		scanf("%[^\n]%*c", message);
 		ws_result = send(s, message, strlen(message), 0);
 		if (ws_result < 0)
 		{

@@ -52,7 +52,7 @@ int main()
 	struct sockaddr_in client;
 	int clientSize = sizeof(client);
 
-	SOCKET clientSocket = accept(listening, &client, &clientSize);
+	SOCKET clientSocket = accept(listening, (struct sockaddr*)&client, &clientSize);
 
 	// Main program loop
 	char strMsg[1024];
@@ -60,6 +60,7 @@ int main()
 
 	int i = 1;
 
+	new_client:
 	strcpy(strMsg, "\nHello! welcome to the server...\n");
 	printf("\n%s\n", strMsg);
 	send(clientSocket, strMsg, strlen(strMsg) + 1, 0);
@@ -98,11 +99,8 @@ int main()
 		{
 			strcpy(strMsg, "\nBye client...\n");
 			send(clientSocket, strMsg, strlen(strMsg) + 1, 0);
-			clientSocket = accept(listening, &client, &clientSize);
-
-			strcpy(strMsg, "\nHello! welcome to the server...\n");
-			printf("\n%s\n", strMsg);
-			send(clientSocket, strMsg, strlen(strMsg) + 1, 0);
+			clientSocket = accept(listening, (struct sockaddr*)&client, &clientSize);
+			goto new_client;
 		}
 		else
 		{
