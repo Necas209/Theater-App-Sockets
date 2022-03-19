@@ -43,7 +43,7 @@ int main()
 	hint.sin_port = htons(DS_TEST_PORT);
 	hint.sin_addr.S_un.S_addr = INADDR_ANY;
 
-	bind(listening, &hint, sizeof(hint));
+	bind(listening, (struct sockaddr*)&hint, sizeof(hint));
 
 	// Setup the socket for listening
 	listen(listening, SOMAXCONN);
@@ -60,7 +60,6 @@ int main()
 
 	int i = 1;
 
-	new_client:
 	strcpy(strMsg, "\nHello! welcome to the server...\n");
 	printf("\n%s\n", strMsg);
 	send(clientSocket, strMsg, strlen(strMsg) + 1, 0);
@@ -77,7 +76,7 @@ int main()
 		if (bytesReceived == 0)
 		{
 			printf("\nClient disconnected!\n");
-			clientSocket = accept(listening, &client, &clientSize);
+			clientSocket = accept(listening, (struct sockaddr*)&client, &clientSize);
 		}
 
 		printf("%i : %s\n", i++, strRec);
@@ -100,7 +99,10 @@ int main()
 			strcpy(strMsg, "\nBye client...\n");
 			send(clientSocket, strMsg, strlen(strMsg) + 1, 0);
 			clientSocket = accept(listening, (struct sockaddr*)&client, &clientSize);
-			goto new_client;
+
+			strcpy(strMsg, "\nHello! welcome to the server...\n");
+			printf("\n%s\n", strMsg);
+			send(clientSocket, strMsg, strlen(strMsg) + 1, 0);
 		}
 		else
 		{
