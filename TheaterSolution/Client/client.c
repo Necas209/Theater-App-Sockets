@@ -62,7 +62,7 @@ int main(int argc, char* argv[])
 		// Send some data
 		printf("Message %i : ", i);
 		scanf("%[^\n]%*c", message);
-		ws_result = send(s, message, strlen(message) + 1, 0);
+		ws_result = send(s, message, (int)strlen(message) + 1, 0);
 		if (ws_result < 0)
 		{
 			puts("Send failed");

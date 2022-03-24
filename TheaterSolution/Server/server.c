@@ -8,7 +8,7 @@
 #include <winsock2.h>
 #include <time.h>
 
-#define DS_TEST_PORT 68000
+#define DS_TEST_PORT (u_short)68000
 
 #pragma warning(disable : 4996)
 
@@ -54,14 +54,14 @@ int main()
 	SOCKET clientSocket = accept(listening, (SOCKADDR*)&client, &clientSize);
 
 	// Main program loop
-	char strMsg[1024];
+	char strMsg[1204];
 	char strRec[1024];
 
 	int i = 1;
 
 	strcpy(strMsg, "100 OK");
 	printf("\n%s\n", strMsg);
-	send(clientSocket, strMsg, strlen(strMsg) + 1, 0);
+	send(clientSocket, strMsg, (int)strlen(strMsg) + 1, 0);
 
 	while (true)
 	{
@@ -80,28 +80,15 @@ int main()
 
 		printf("%i : %s\n", i++, strRec);
 
-		//if (strcmp(strRec, "date") == 0)
-		//{
-		//	// current date/time based on current system
-		//	time_t now = time(0);
-		//	// convert now to string form
-		//	char *dt = ctime(&now);
-		//
-		//	strcpy(strMsg, "\n\nThe local date and time is: ");
-		//	strcat(strMsg, dt);
-		//	strcat(strMsg, "\n");
-		//
-		//	send(clientSocket, strMsg, strlen(strMsg) + 1, 0);
-		//}
-		if (strcmp(strRec, "QUIT") == 0)
+		if (strcmp(strupr(strRec), "QUIT") == 0)
 		{
 			strcpy(strMsg, "400 BYE");
-			send(clientSocket, strMsg, strlen(strMsg) + 1, 0);
+			send(clientSocket, strMsg, (int)strlen(strMsg) + 1, 0);
 			clientSocket = accept(listening, (SOCKADDR*)&client, &clientSize);
 
 			strcpy(strMsg, "100 OK");
 			printf("\n%s\n", strMsg);
-			send(clientSocket, strMsg, strlen(strMsg) + 1, 0);
+			send(clientSocket, strMsg, (int)strlen(strMsg) + 1, 0);
 		}
 		else
 		{
