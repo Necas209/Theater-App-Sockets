@@ -55,7 +55,6 @@ int main(int argc, char* argv[])
 
 	// Receive a reply from the server
 	recv_size = recv(s, server_reply, 2000, 0);
-	//server_reply[recv_size] = '\0';
 	puts(server_reply);
 
 	while (true)
@@ -77,8 +76,6 @@ int main(int argc, char* argv[])
 		{
 			puts("recv failed");
 		}
-		// Add a NULL terminating character to make it a proper string before printing
-		server_reply[recv_size] = '\0';
 		if (strcmp(server_reply, "400 BYE") == 0)
 		{
 			puts("Bye, server...\n");
