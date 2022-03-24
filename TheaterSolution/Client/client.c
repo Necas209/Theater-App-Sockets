@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
 	// create the socket  address (ip address and port)
 	server.sin_addr.s_addr = inet_addr("25.63.23.179");
 	server.sin_family = AF_INET;
-	server.sin_port = htons(68000);
+	server.sin_port = htons((u_short)68000);
 
 	// Connect to remote server
 	ws_result = connect(s, (SOCKADDR*)&server, sizeof(server));
