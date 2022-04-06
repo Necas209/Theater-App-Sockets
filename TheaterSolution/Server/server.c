@@ -6,13 +6,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <winsock2.h>
-#include <time.h>
+#include "Theater.h"
 
 #define DS_TEST_PORT (u_short)68000
 
 #pragma warning(disable : 4996)
 
-int main()
+LIST Theaters = NULL;
+
+int main(int argc, char* argv[])
 {
 	// Initialise winsock
 	WSADATA wsData;

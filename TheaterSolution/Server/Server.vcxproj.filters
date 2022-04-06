@@ -13,10 +13,48 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\CSV">
+      <UniqueIdentifier>{4a54df30-5b29-4e7a-86c3-2a71048c4bdb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="server.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Theater.h">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Show.h">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="List.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CSV\csv.c">
+      <Filter>Source Files\CSV</Filter>
+    </ClCompile>
+    <ClCompile Include="CSV\fread_csv_line.c">
+      <Filter>Source Files\CSV</Filter>
+    </ClCompile>
+    <ClCompile Include="CSV\split.c">
+      <Filter>Source Files\CSV</Filter>
+    </ClCompile>
+    <ClCompile Include="stringtotime.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Theater.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="stringtotime.h">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="List.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CSV\csv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -81,7 +81,7 @@ DWORD WINAPI CountToTwenty(LPVOID lpParam)
         case WAIT_OBJECT_0:
             __try {
                 // TODO: Count to 100
-                printf("\nThread % d , %d contagem:\n", GetCurrentThreadId(), dwCount);
+                printf("\nThread %d , %d contagem:\n", GetCurrentThreadId(), dwCount);
                 for (i = 1; i <= 10; i++)
                 {
                     printf(" Thread %d: %d |", GetCurrentThreadId(), i);

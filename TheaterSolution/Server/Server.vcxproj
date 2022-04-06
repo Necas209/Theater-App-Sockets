@@ -140,7 +140,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="stringtotime.h" />
+    <ClCompile Include="CSV\csv.c" />
+    <ClCompile Include="CSV\fread_csv_line.c" />
+    <ClCompile Include="CSV\split.c" />
+    <ClCompile Include="List.c" />
     <ClCompile Include="server.c" />
+    <ClCompile Include="Show.h" />
+    <ClCompile Include="stringtotime.c" />
+    <ClCompile Include="Theater.c" />
+    <ClCompile Include="Theater.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CSV\csv.h" />
+    <ClInclude Include="List.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

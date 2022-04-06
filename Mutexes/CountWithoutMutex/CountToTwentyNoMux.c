@@ -7,7 +7,7 @@ DWORD WINAPI CountToTwenty(LPVOID);
 
 int main(void)
 {
-    HANDLE aThread[THREADCOUNT];
+    HANDLE aThread[THREADCOUNT] = { NULL };
     DWORD ThreadID;
     int i;
 
@@ -57,11 +57,11 @@ DWORD WINAPI CountToTwenty(LPVOID lpParam)
     {
     // TODO: Count to 20
        
-        printf("\nThread % d , %d contagem:\n", GetCurrentThreadId(), dwCount);
+        printf("\nThread %d , %d contagem:\n", GetCurrentThreadId(), dwCount);
         for (i = 1; i <= 10; i++)
         {
             printf(" Thread %d: %d |", GetCurrentThreadId(), i);
-            Sleep(500*((int) rand()%2));
+            Sleep(500 * ((int)rand() % 2));
         }
         
     }
