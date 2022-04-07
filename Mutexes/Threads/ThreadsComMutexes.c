@@ -79,7 +79,7 @@ int main()
 		   Para saber de mais informação sobre este método, consultar a documentação em https://docs.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-waitforsingleobject
 		 */
 
-		waitForSingleObject_MainThread = WaitForSingleObject(sharedMutex, INFINITE); // Como o tempo está declarado como infinito, significa que o código só avança quando o sharedMutex for sinalizado.
+		waitForSingleObject_MainThread = WaitForSingleObject(sharedMutex, INFINITE); // Como o tempo está declarado como infinito, significa que o código só avanç   a quando o sharedMutex for sinalizado.
 		printf("Main Thread - waitForSingleObject_MainThread returned value is 0X % .8X\n\n", waitForSingleObject_MainThread);
 	}
 
