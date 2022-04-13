@@ -8,5 +8,5 @@
 extern std::map<std::string, Theater*> theaters;
 
 void WriteTheaters();
-void ReadTheatersFromFile();
-void WriteTheatersToFile();
+void ReadTheatersFromFile(const char* filename = "shows.csv");
+void WriteTheatersToFile(const char* filename = "shows.csv");

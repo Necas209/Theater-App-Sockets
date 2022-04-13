@@ -10,9 +10,9 @@ void WriteTheaters()
 	}
 }
 
-void ReadTheatersFromFile()
+void ReadTheatersFromFile(const char* filename)
 {
-	io::CSVReader<6> reader("shows.csv");
+	io::CSVReader<6> reader(filename);
 	reader.read_header(io::ignore_no_column,
 		"theater", "location", "name", "datetime", "capacity", "available_seats");
 
@@ -40,9 +40,9 @@ void ReadTheatersFromFile()
 	}
 }
 
-void WriteTheatersToFile()
+void WriteTheatersToFile(const char* filename)
 {
-	std::ofstream ofs{ "theaters.csv" };
+	std::ofstream ofs{ filename };
 	ofs << "theater,location,name,datetime,capacity,available_seats\n";
 	for (const auto& [name, theater] : theaters)
 	{

@@ -2,9 +2,9 @@
 	Simple winsock client
 */
 
-#include <stdbool.h>
-#include <stdio.h>
-#include <winsock2.h>
+#include <iostream>
+#include <cstdio>
+#include <WinSock2.h>
 
 #pragma warning(disable : 4996)
 
@@ -12,7 +12,7 @@ int main(int argc, char* argv[])
 {
 	WSADATA wsa;
 	SOCKET s;
-	SOCKADDR_IN server;
+	SOCKADDR_IN server{};
 	char message[2000], server_reply[2000];
 	int recv_size;
 	int ws_result;
@@ -61,8 +61,8 @@ int main(int argc, char* argv[])
 	{
 		// Send some data
 		printf("Message %i : ", i);
-		scanf("%[^\n]%*c", message);
-		ws_result = send(s, message, (int)strlen(message) + 1, 0);
+		std::cin.getline(message, sizeof(message));
+		ws_result = send(s, message, strlen(message) + 1, 0);
 		if (ws_result < 0)
 		{
 			puts("Send failed");

@@ -26,8 +26,7 @@ void Theater::WriteFile(std::ofstream& ofs)
 {
 	for (const auto& show : shows)
 	{
-		ofs << '"' << name << "\",";
-		ofs << '"' << location << "\",";
+		ofs << name << ',' << location << ',';
 		show->WriteFile(ofs);
 		ofs << '\n';
 	}

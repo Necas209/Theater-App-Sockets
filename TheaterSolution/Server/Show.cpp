@@ -22,8 +22,7 @@ void Show::Write()
 void Show::WriteFile(std::ofstream& ofs)
 {
 	char buf[100];
-	ofs << '\"' << name << "\",";
+	ofs << name << ',';
 	strftime(buf, sizeof(buf), "%c", datetime);
-	ofs << '\"' << buf << "\",";
-	ofs << capacity << ',' << available_seats;
+	ofs << buf << ',' << capacity << ',' << available_seats;
 }
