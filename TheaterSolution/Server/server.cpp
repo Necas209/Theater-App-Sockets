@@ -2,44 +2,42 @@
 	Simple winsock Server
 */
 
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <winsock2.h>
-#include "Theater.h"
+#include <WinSock2.h>
+#include "Theaters.h"
 
 #define DS_TEST_PORT (u_short)68000
 
-#pragma warning(disable : 4996)
-
-LIST Theaters = NULL;
-
 int main(int argc, char* argv[])
 {
+	SetConsoleOutputCP(CP_UTF8);
 	// Initialise winsock
 	WSADATA wsData;
 	WORD ver = MAKEWORD(2, 2);
 
-	printf("\nInitialising Winsock...");
+	std::cout << "Initialising Winsock...\n";
 	int wsResult = WSAStartup(ver, &wsData);
 	if (wsResult != 0)
 	{
-		fprintf(stderr, "\nWinsock setup fail! Error Code : %d\n", WSAGetLastError());
+		fprintf(stderr, "\nWinsock setup failed! Error Code : %d\n", WSAGetLastError());
 		return 1;
 	}
+	ReadTheatersFromFile();
+	WriteTheaters();
+	std::cout << '\n';
+	system("pause");
 
 	// Create a socket
 	SOCKET listening = socket(AF_INET, SOCK_STREAM, 0);
 	if (listening == INVALID_SOCKET)
 	{
-		fprintf(stderr, "\nSocket creationg fail! Error Code : %d\n", WSAGetLastError());
+		fprintf(stderr, "\nSocket creation failed! Error Code : %d\n", WSAGetLastError());
 		return 1;
 	}
 
 	printf("\nSocket created.");
 
 	// Bind the socket (ip address and port)
-	SOCKADDR_IN hint;
+	SOCKADDR_IN hint{};
 	hint.sin_family = AF_INET;
 	hint.sin_port = htons(DS_TEST_PORT);
 	hint.sin_addr.S_un.S_addr = INADDR_ANY;
@@ -50,7 +48,7 @@ int main(int argc, char* argv[])
 	listen(listening, SOMAXCONN);
 
 	// Wait for connection
-	SOCKADDR_IN client;
+	SOCKADDR_IN client{};
 	int clientSize = sizeof(client);
 
 	SOCKET clientSocket = accept(listening, (SOCKADDR*)&client, &clientSize);

@@ -116,6 +116,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -140,20 +141,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="stringtotime.h" />
-    <ClCompile Include="CSV\csv.c" />
-    <ClCompile Include="CSV\fread_csv_line.c" />
-    <ClCompile Include="CSV\split.c" />
-    <ClCompile Include="List.c" />
-    <ClCompile Include="server.c" />
-    <ClCompile Include="Show.h" />
-    <ClCompile Include="stringtotime.c" />
-    <ClCompile Include="Theater.c" />
-    <ClCompile Include="Theater.h" />
+    <ClCompile Include="Show.cpp" />
+    <ClCompile Include="server.cpp" />
+    <ClCompile Include="Theaters.cpp" />
+    <ClInclude Include="csv.h" />
+    <ClInclude Include="Show.h" />
+    <ClCompile Include="Theater.cpp" />
+    <ClInclude Include="Theater.h" />
+    <ClInclude Include="Theaters.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CSV\csv.h" />
-    <ClInclude Include="List.h" />
+    <None Include="shows.csv" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

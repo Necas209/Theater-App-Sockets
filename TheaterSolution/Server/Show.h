@@ -1,13 +1,17 @@
 #pragma once
+#include <iostream>
+#include <fstream>
 
-#include <time.h>
-
-#define MAX 100
-
-typedef struct Show
+class Show
 {
-	char name[MAX];
+public:
+	std::string name;
 	tm* datetime;
 	int capacity;
 	int available_seats;
-} Show;
+
+	Show();
+	virtual ~Show();
+	void Write();
+	void WriteFile(std::ofstream& ofs);
+};

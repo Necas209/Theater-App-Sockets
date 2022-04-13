@@ -1,19 +1,16 @@
 #pragma once
-
+#include <list>
 #include "Show.h"
-#include "List.h"
-#include "CSV/csv.h"
-#include "stringtotime.h"
-#include "Theater.h"
 
-#define MAX 100
-
-typedef struct Theater
+class Theater
 {
-	char name[MAX];
-	char location[MAX];
-	LIST shows = NULL;
-} Theater;
+public:
+	std::string name;
+	std::string location;
+	std::list<Show*> shows;
 
-void readTheaters(LIST* theaters);
-void writeTheaters(LIST theaters);
+	Theater();
+	virtual ~Theater();
+	void Write();
+	void WriteFile(std::ofstream& ofs);
+};
