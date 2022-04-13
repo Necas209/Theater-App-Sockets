@@ -23,7 +23,6 @@ int main(int argc, char* argv[])
 	}
 	ReadTheatersFromFile();
 	WriteTheaters();
-	//WriteTheatersToFile();
 	std::cout << '\n';
 	system("pause");
 

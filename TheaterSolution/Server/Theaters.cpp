@@ -19,7 +19,6 @@ void ReadTheatersFromFile(const char* filename)
 	std::string theater_name, location, name, datetime;
 	int capacity, available_seats;
 
-	Show* show = new Show;
 	while (reader.read_row(theater_name, location, name,
 		datetime, capacity, available_seats))
 	{
@@ -33,7 +32,7 @@ void ReadTheatersFromFile(const char* filename)
 		Show* show = new Show;
 		show->name = name;
 		std::istringstream ss{ datetime };
-		ss >> std::get_time(show->datetime, "%a %b %d %H:%M:%S %Y");
+		ss >> std::get_time(&show->datetime, "%a %b %d %H:%M:%S %Y");
 		show->capacity = capacity;
 		show->available_seats = available_seats;
 		theaters[theater_name]->shows.push_back(show);

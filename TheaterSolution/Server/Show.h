@@ -1,12 +1,13 @@
 #pragma once
 #include <iostream>
 #include <fstream>
+#include <iomanip>
 
 class Show
 {
 public:
 	std::string name;
-	tm* datetime;
+	tm datetime;
 	int capacity;
 	int available_seats;
 
