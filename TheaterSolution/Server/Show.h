@@ -11,7 +11,7 @@ public:
 	int capacity;
 	int available_seats;
 
-	Show();
+	Show(std::string name, int capacity, int available_seats);
 	virtual ~Show();
 	void Write();
 	void WriteFile(std::ofstream& ofs);

@@ -1,6 +1,7 @@
 #include "Theater.h"
 
-Theater::Theater()
+Theater::Theater(std::string name, std::string location)
+	: name(name), location(location)
 {
 }
 

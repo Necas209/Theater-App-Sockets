@@ -24,17 +24,12 @@ void ReadTheatersFromFile(const char* filename)
 	{
 		if (!theaters.contains(theater_name))
 		{
-			Theater* theater = new Theater;
-			theater->name = theater_name;
-			theater->location = location;
+			Theater* theater = new Theater(name, location);
 			theaters.insert(std::make_pair(theater_name, theater));
 		}
-		Show* show = new Show;
-		show->name = name;
+		Show* show = new Show(name, capacity, available_seats);
 		std::istringstream ss{ datetime };
 		ss >> std::get_time(&show->datetime, "%a %b %d %H:%M:%S %Y");
-		show->capacity = capacity;
-		show->available_seats = available_seats;
 		theaters[theater_name]->shows.push_back(show);
 	}
 }

@@ -1,9 +1,8 @@
 #include "Show.h"
 
-Show::Show()
+Show::Show(std::string name, int capacity, int available_seats)
+	: name(name), capacity(capacity), available_seats(available_seats)
 {
-	capacity = 0;
-	available_seats = 0;
 }
 
 Show::~Show()
