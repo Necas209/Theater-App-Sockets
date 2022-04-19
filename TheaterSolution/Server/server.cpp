@@ -23,6 +23,7 @@ int main(int argc, char* argv[])
 	}
 	ReadTheatersFromFile();
 	WriteTheaters();
+	ReadClientsFromFile();
 	std::cout << '\n';
 	system("pause");
 
@@ -34,7 +35,7 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-	printf("\nSocket created.");
+	std::cout << "\nSocket created.\n";
 
 	// Bind the socket (ip address and port)
 	SOCKADDR_IN hint{};
@@ -53,18 +54,22 @@ int main(int argc, char* argv[])
 
 	// Client Communication
 	SOCKET clientSocket;
-	std::vector<std::thread> threads;
+	std::list<std::thread> threads;
 	while ((clientSocket = accept(listening, (SOCKADDR*)&client, &clientSize)) != SOCKET_ERROR)
 	{
-		threads.emplace_back(ClientCall, clientSocket);
+		threads.emplace_back(ClientCall, clientSocket, client);
 	}
 	closesocket(listening);
 	for (auto& thread : threads)
 	{
 		thread.join();
 	}
+
+	// Save data to files
+	WriteTheatersToFile();
+	WriteClientsToFile();
+
 	// Cleanup winsock
 	WSACleanup();
-
 	return 0;
 }
