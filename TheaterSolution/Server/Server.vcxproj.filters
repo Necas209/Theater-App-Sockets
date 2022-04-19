@@ -24,7 +24,7 @@
     <ClCompile Include="Show.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Theaters.cpp">
+    <ClCompile Include="utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -38,7 +38,7 @@
     <ClInclude Include="csv.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Theaters.h">
+    <ClInclude Include="utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

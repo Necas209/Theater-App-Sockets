@@ -1,4 +1,4 @@
-#include "Theaters.h"
+#include "utils.h"
 
 std::map<std::string, Theater*> theaters;
 
@@ -47,4 +47,47 @@ void WriteTheatersToFile(const char* filename)
 	{
 		theater->WriteFile(ofs);
 	}
+}
+
+int ClientCall(SOCKET clientSocket)
+{
+	char strMsg[1024];
+	char strRec[1024];
+
+	int i = 1;
+
+	strcpy(strMsg, "100 OK");
+	printf("\n%s\n", strMsg);
+	send(clientSocket, strMsg, (int)strlen(strMsg) + 1, 0);
+
+	while (true)
+	{
+		ZeroMemory(strRec, 1024);
+		int bytesReceived = recv(clientSocket, strRec, 1024, 0);
+		if (bytesReceived == SOCKET_ERROR)
+		{
+			printf("\nReceive error!\n");
+			break;
+		}
+		if (bytesReceived == 0)
+		{
+			printf("\nClient disconnected!\n");
+			break;
+		}
+
+		printf("%i : %s\n", i++, strRec);
+		if (strcmp(strupr(strRec), "QUIT") == 0)
+		{
+			strcpy(strMsg, "400 BYE");
+			send(clientSocket, strMsg, (int)strlen(strMsg) + 1, 0);
+			std::cout << "Bye, client...\n\n";
+			break;
+		}
+		else
+		{
+			send(clientSocket, strRec, bytesReceived + 1, 0);
+		}
+	}
+	// Close the socket
+	return closesocket(clientSocket);
 }

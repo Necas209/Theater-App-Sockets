@@ -2,9 +2,7 @@
 	Simple winsock client
 */
 
-#include <iostream>
-#include <cstdio>
-#include <WinSock2.h>
+#include "utils.h"
 
 #pragma warning(disable : 4996)
 
@@ -13,12 +11,10 @@ int main(int argc, char* argv[])
 	WSADATA wsa;
 	SOCKET s;
 	SOCKADDR_IN server{};
-	char message[2000], server_reply[2000];
-	int recv_size;
 	int ws_result;
 
 	// Initialise winsock
-	printf("\nInitialising Winsock...");
+	std::cout << "\nInitialising Winsock...";
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
 	{
 		printf("Failed. Error Code : %d", WSAGetLastError());
@@ -34,10 +30,19 @@ int main(int argc, char* argv[])
 		printf("Could not create socket : %d", WSAGetLastError());
 	}
 
-	printf("Socket created.\n");
+	std::cout << "Socket created.\n";
 
+	// Ask client for server ip address
+	std::string ip_addr;
+	std::cout << "Server IP address: ";
+	getline(std::cin, ip_addr);
+	if (!validateIP(ip_addr))
+	{
+		ip_addr = "25.63.23.179";
+		std::cout << "Invalid IP address.\nIP will default to " << ip_addr << ".\n";
+	}
 	// create the socket  address (ip address and port)
-	server.sin_addr.s_addr = inet_addr("25.63.23.179");
+	server.sin_addr.s_addr = inet_addr(ip_addr.data());
 	server.sin_family = AF_INET;
 	server.sin_port = htons((u_short)68000);
 
@@ -45,49 +50,13 @@ int main(int argc, char* argv[])
 	ws_result = connect(s, (SOCKADDR*)&server, sizeof(server));
 	if (ws_result < 0)
 	{
-		puts("connect error");
+		std::cout << "Connection error\n";
 		return 1;
 	}
 
-	puts("Connected");
+	std::cout << "Connected\n";
 
-	int i = 1;
-
-	// Receive a reply from the server
-	recv_size = recv(s, server_reply, 2000, 0);
-	puts(server_reply);
-
-	while (true)
-	{
-		// Send some data
-		printf("Message %i : ", i);
-		std::cin.getline(message, sizeof(message));
-		ws_result = send(s, message, strlen(message) + 1, 0);
-		if (ws_result < 0)
-		{
-			puts("Send failed");
-			return 1;
-		}
-		puts("Data Sent\n");
-
-		// Receive a reply from the server
-		recv_size = recv(s, server_reply, 2000, 0);
-		if (recv_size == SOCKET_ERROR)
-		{
-			puts("recv failed");
-		}
-		if (strcmp(server_reply, "400 BYE") == 0)
-		{
-			puts("Bye, server...\n");
-			break;
-		}
-		puts("Reply received\n");
-		printf("Reply %i : %s\n", i++, server_reply);
-	}
-
-	// Close the socket
-	closesocket(s);
-
+	ServerCall(s);
 	// Cleanup winsock
 	WSACleanup();
 

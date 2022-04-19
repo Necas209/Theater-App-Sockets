@@ -143,12 +143,12 @@
   <ItemGroup>
     <ClCompile Include="Show.cpp" />
     <ClCompile Include="server.cpp" />
-    <ClCompile Include="Theaters.cpp" />
+    <ClCompile Include="utils.cpp" />
     <ClInclude Include="csv.h" />
     <ClInclude Include="Show.h" />
     <ClCompile Include="Theater.cpp" />
     <ClInclude Include="Theater.h" />
-    <ClInclude Include="Theaters.h" />
+    <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shows.csv" />

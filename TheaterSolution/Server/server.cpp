@@ -2,10 +2,10 @@
 	Simple winsock Server
 */
 
-#include <WinSock2.h>
-#include "Theaters.h"
+#include "utils.h"
 
-#define DS_TEST_PORT (u_short)68000
+constexpr auto DS_TEST_PORT = (u_short)68000;
+//constexpr auto MAX_THREADS = 10;
 
 int main(int argc, char* argv[])
 {
@@ -51,57 +51,18 @@ int main(int argc, char* argv[])
 	SOCKADDR_IN client{};
 	int clientSize = sizeof(client);
 
-	SOCKET clientSocket = accept(listening, (SOCKADDR*)&client, &clientSize);
-
-	// Main program loop
-	char strMsg[1204];
-	char strRec[1024];
-
-	int i = 1;
-
-	strcpy(strMsg, "100 OK");
-	printf("\n%s\n", strMsg);
-	send(clientSocket, strMsg, (int)strlen(strMsg) + 1, 0);
-
-	while (true)
+	// Client Communication
+	SOCKET clientSocket;
+	std::vector<std::thread> threads;
+	while ((clientSocket = accept(listening, (SOCKADDR*)&client, &clientSize)) != SOCKET_ERROR)
 	{
-		ZeroMemory(strRec, 1024);
-		int bytesReceived = recv(clientSocket, strRec, 1024, 0);
-		if (bytesReceived == SOCKET_ERROR)
-		{
-			printf("\nReceive error!\n");
-			break;
-		}
-		if (bytesReceived == 0)
-		{
-			printf("\nClient disconnected!\n");
-			clientSocket = accept(listening, (SOCKADDR*)&client, &clientSize);
-		}
-
-		printf("%i : %s\n", i++, strRec);
-
-		if (strcmp(strupr(strRec), "QUIT") == 0)
-		{
-			strcpy(strMsg, "400 BYE");
-			send(clientSocket, strMsg, (int)strlen(strMsg) + 1, 0);
-			clientSocket = accept(listening, (SOCKADDR*)&client, &clientSize);
-
-			strcpy(strMsg, "100 OK");
-			printf("\n%s\n", strMsg);
-			send(clientSocket, strMsg, (int)strlen(strMsg) + 1, 0);
-		}
-		else
-		{
-			send(clientSocket, strRec, bytesReceived + 1, 0);
-		}
+		threads.emplace_back(ClientCall, clientSocket);
 	}
-
-	// Close listening socket
 	closesocket(listening);
-
-	// Close the socket
-	closesocket(clientSocket);
-
+	for (auto& thread : threads)
+	{
+		thread.join();
+	}
 	// Cleanup winsock
 	WSACleanup();
 
