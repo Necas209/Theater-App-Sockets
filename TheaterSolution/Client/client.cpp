@@ -13,6 +13,7 @@ int main(int argc, char* argv[])
 	SOCKADDR_IN server{};
 	int ws_result;
 
+	SetConsoleCP(CP_UTF8);
 	// Initialise winsock
 	std::cout << "\nInitialising Winsock...";
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)

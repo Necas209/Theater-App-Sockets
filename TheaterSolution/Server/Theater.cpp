@@ -7,28 +7,24 @@ Theater::Theater(std::string name, std::string location)
 
 Theater::~Theater()
 {
-	for (auto& show : shows)
-	{
-		delete show;
-	}
 	shows.clear();
 }
 
-void Theater::Write()
+void Theater::write()
 {
 	std::cout << name << "; " << location << "; ";
-	for (const auto& show : shows)
+	for (auto& show : shows)
 	{
-		show->Write();
+		show.write();
 	}
 }
 
-void Theater::WriteFile(std::ofstream& ofs)
+void Theater::write_file(std::ofstream& ofs)
 {
-	for (const auto& show : shows)
+	for (auto& show : shows)
 	{
 		ofs << name << ',' << location << ',';
-		show->WriteFile(ofs);
+		show.write_file(ofs);
 		ofs << '\n';
 	}
 }

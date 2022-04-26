@@ -1,5 +1,4 @@
 #pragma once
-
 #include <fstream>
 #include <string>
 #include <list>
@@ -12,11 +11,11 @@ class Client
 public:
 	std::string ip;
 	std::list<int> showsSeen;
-	std::list<int> showsRecommended;
+	std::list<int> showsRec;
 	Client();
 	Client(std::string ip);
 	virtual ~Client();
+	bool been_recommended(const int id);
+	friend void to_json(json& j, const Client& c);
+	friend void from_json(const json& j, Client& c);
 };
-
-void to_json(json& j, const Client& c);
-void from_json(const json& j, Client& c);

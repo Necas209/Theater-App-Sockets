@@ -20,6 +20,8 @@
 #include <limits>
 
 #pragma warning(disable : 4996)
+#pragma warning(disable : 26451)
+#pragma warning(disable : 26495)
 
 namespace io {
 	////////////////////////////////////////////////////////////////////////////

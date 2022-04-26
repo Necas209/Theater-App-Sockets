@@ -6,7 +6,7 @@
 #include "Client.h"
 #include "csv.h"
 
-extern std::map<std::string, Theater*> theaters;
+extern std::map<std::string, Theater> theaters;
 extern std::map<std::string, Client> clients;
 
 void WriteTheaters();

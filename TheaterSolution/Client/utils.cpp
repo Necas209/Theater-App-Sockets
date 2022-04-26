@@ -8,43 +8,41 @@ bool validateIP(const std::string& ip_addr)
 	return std::regex_match(ip_addr, re);
 }
 
-int ServerCall(SOCKET& s)
+int ServerCall(SOCKET& serverSocket)
 {
-	char message[2000];
+	std::string message;
 	char server_reply[2000];
-	int recv_size, ws_result, i = 1;
+	int recv_size, ws_result, i = 0;
 
 	// Receive a reply from the server
-	recv_size = recv(s, server_reply, 2000, 0);
+	recv_size = recv(serverSocket, server_reply, 2000, 0);
 	std::cout << server_reply << '\n';
 
-	while (true)
+	// Ask for location
+	std::cout << "Localização: ";
+	std::getline(std::cin, message);
+	ws_result = send(serverSocket, message.data(), message.length() + 1, 0);
+	if (ws_result < 0)
 	{
-		// Send some data
-		printf("Message %i : ", i);
-		std::cin.getline(message, sizeof(message));
-		ws_result = send(s, message, strlen(message) + 1, 0);
-		if (ws_result < 0)
-		{
-			std::cout << "Send failed\n";
-			return 1;
-		}
-		std::cout << "Data Sent\n\n";
-
-		// Receive a reply from the server
-		recv_size = recv(s, server_reply, 2000, 0);
-		if (recv_size == SOCKET_ERROR)
-		{
-			std::cout << "recv failed\n";
-		}
-		if (strcmp(server_reply, "400 BYE") == 0)
-		{
-			std::cout << "Bye, server...\n\n";
-			break;
-		}
-		std::cout << "Reply received\n\n";
-		printf("Reply %i : %s\n", i++, server_reply);
+		std::cout << "Send failed\n";
+		return 1;
 	}
+	std::cout << "Data Sent\n\n";
+
+	// Receive a reply from the server
+	recv_size = recv(serverSocket, server_reply, 2000, 0);
+	if (recv_size == SOCKET_ERROR)
+	{
+		std::cout << "recv failed\n";
+	}
+	if (strcmp(server_reply, "400 BYE") == 0)
+	{
+		std::cout << "Bye, server...\n\n";
+	}
+
+	std::cout << "Reply received\n\n";
+	printf("Reply %i : %s\n", i++, server_reply);
+
 	// Close the socket
-	return closesocket(s);
+	return closesocket(serverSocket);
 }
