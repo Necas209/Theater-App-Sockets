@@ -91,6 +91,8 @@ int ClientCall(SOCKET clientSocket, SOCKADDR_IN client)
 			ret_val = 1;
 			break;
 		}
+		std::cout << reply << '\n';
+		system("pause");
 		std::transform(reply.begin(), reply.end(), reply.begin(), ::toupper);
 		
 		// Check if client wants to quit
@@ -103,8 +105,8 @@ int ClientCall(SOCKET clientSocket, SOCKADDR_IN client)
 		}
 
 		// Check for theaters in said location
-		using pair = std::pair<std::string&, Theater&>;
-		auto find_loc = [&](pair p) { return reply == p.second.get_location(); };
+		using pair = std::pair<std::string, Theater>;
+		auto find_loc = [&](pair& p) { return p.second.get_location() == reply; };
 		auto it = std::find_if(theaters.begin(), theaters.end(), find_loc);
 
 		// If theater exists, send number of shows

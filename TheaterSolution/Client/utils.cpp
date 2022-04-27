@@ -18,31 +18,33 @@ int ServerCall(SOCKET& serverSocket)
 	recv_size = recv(serverSocket, server_reply, 2000, 0);
 	std::cout << server_reply << '\n';
 
-	// Ask for location
-	std::cout << "Localização: ";
-	std::getline(std::cin, message);
-	ws_result = send(serverSocket, message.data(), message.length() + 1, 0);
-	if (ws_result < 0)
+	while (true)
 	{
-		std::cout << "Send failed\n";
-		return 1;
-	}
-	std::cout << "Data Sent\n\n";
+		// Ask for location
+		std::cout << "Localização: ";
+		std::getline(std::cin, message);
+		ws_result = send(serverSocket, message.data(), message.length() + 1, 0);
+		if (ws_result < 0)
+		{
+			std::cout << "Send failed\n";
+			return 1;
+		}
+		std::cout << "Data Sent\n\n";
 
-	// Receive a reply from the server
-	recv_size = recv(serverSocket, server_reply, 2000, 0);
-	if (recv_size == SOCKET_ERROR)
-	{
-		std::cout << "recv failed\n";
-	}
-	if (strcmp(server_reply, "400 BYE") == 0)
-	{
-		std::cout << "Bye, server...\n\n";
-	}
+		// Receive a reply from the server
+		recv_size = recv(serverSocket, server_reply, 2000, 0);
+		if (recv_size == SOCKET_ERROR)
+		{
+			std::cout << "recv failed\n";
+		}
+		if (strcmp(server_reply, "400 BYE") == 0)
+		{
+			std::cout << "Bye, server...\n\n";
+		}
 
-	std::cout << "Reply received\n\n";
-	printf("Reply %i : %s\n", i++, server_reply);
-
+		std::cout << "Reply received\n\n";
+		printf("Reply %i : %s\n", i++, server_reply);
+	}
 	// Close the socket
 	return closesocket(serverSocket);
 }

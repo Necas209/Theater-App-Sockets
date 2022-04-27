@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Client", "Client\Client.vcx
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Server", "Server\Server.vcxproj", "{92227FF9-E87A-4C2A-9FD4-6CC3F891E1EF}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TheaterLib", "TheaterLib\TheaterLib.vcxproj", "{21617F71-207D-4256-8B71-116A008B278C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -31,6 +33,14 @@ Global
 		{92227FF9-E87A-4C2A-9FD4-6CC3F891E1EF}.Release|x64.Build.0 = Release|x64
 		{92227FF9-E87A-4C2A-9FD4-6CC3F891E1EF}.Release|x86.ActiveCfg = Release|Win32
 		{92227FF9-E87A-4C2A-9FD4-6CC3F891E1EF}.Release|x86.Build.0 = Release|Win32
+		{21617F71-207D-4256-8B71-116A008B278C}.Debug|x64.ActiveCfg = Debug|x64
+		{21617F71-207D-4256-8B71-116A008B278C}.Debug|x64.Build.0 = Debug|x64
+		{21617F71-207D-4256-8B71-116A008B278C}.Debug|x86.ActiveCfg = Debug|Win32
+		{21617F71-207D-4256-8B71-116A008B278C}.Debug|x86.Build.0 = Debug|Win32
+		{21617F71-207D-4256-8B71-116A008B278C}.Release|x64.ActiveCfg = Release|x64
+		{21617F71-207D-4256-8B71-116A008B278C}.Release|x64.Build.0 = Release|x64
+		{21617F71-207D-4256-8B71-116A008B278C}.Release|x86.ActiveCfg = Release|Win32
+		{21617F71-207D-4256-8B71-116A008B278C}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

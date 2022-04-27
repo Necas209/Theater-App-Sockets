@@ -117,6 +117,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>C:\Users\diogo\Desktop\TheaterApp\TheaterSolution\TheaterLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -132,6 +133,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>C:\Users\diogo\Desktop\TheaterApp\TheaterSolution\TheaterLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -142,20 +145,19 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp" />
-    <ClCompile Include="Show.cpp" />
     <ClCompile Include="server.cpp" />
     <ClCompile Include="utils.cpp" />
     <ClInclude Include="Client.h" />
-    <ClInclude Include="csv.h" />
-    <ClInclude Include="json.hpp" />
-    <ClInclude Include="Show.h" />
-    <ClCompile Include="Theater.cpp" />
-    <ClInclude Include="Theater.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="clients.json" />
     <None Include="shows.csv" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TheaterLib\TheaterLib.vcxproj">
+      <Project>{21617f71-207d-4256-8b71-116a008b278c}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
