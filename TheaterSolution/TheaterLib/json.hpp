@@ -94,6 +94,8 @@ SOFTWARE.
 #include <cstdint> // uint8_t
 #include <string> // string
 
+#pragma warning(disable : 26495)
+
 namespace nlohmann
 {
 namespace detail

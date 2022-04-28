@@ -15,13 +15,13 @@ void ReadTheatersFromFile(const char* filename)
 {
 	io::CSVReader<7> reader(filename);
 	reader.read_header(io::ignore_no_column,
-		"theater", "location", "id", "name", "datetime", "capacity", "available_seats");
+		"theater", "location", "id", "name", "genre", "datetime", "capacity", "available_seats");
 
-	std::string theater_name, location, name, datetime;
+	std::string theater_name, location, name, genre, datetime;
 	int id, capacity, available_seats;
 
 	while (reader.read_row(theater_name, location, id, name,
-		datetime, capacity, available_seats))
+		genre, datetime, capacity, available_seats))
 	{
 		if (!theaters.contains(theater_name))
 		{
@@ -30,14 +30,14 @@ void ReadTheatersFromFile(const char* filename)
 		std::istringstream ss{ datetime };
 		tm dt;
 		ss >> std::get_time(&dt, "%a %b %d %H:%M:%S %Y");
-		theaters[theater_name].shows.push_back(Show(id, name, dt, capacity, available_seats));
+		theaters[theater_name].shows.push_back(Show(id, name, genre, dt, capacity, available_seats));
 	}
 }
 
 void WriteTheatersToFile(const char* filename)
 {
 	std::ofstream ofs{ filename };
-	ofs << "theater,location,id,name,datetime,capacity,available_seats\n";
+	ofs << "theater,location,id,name,genre,datetime,capacity,available_seats\n";
 	for (auto& [name, theater] : theaters)
 	{
 		theater.write_file(ofs);
@@ -51,7 +51,7 @@ void ReadClientsFromFile(const char* filename)
 	ifs >> j;
 	for (auto& [key, value] : j.items())
 	{
-		Client client = value.get<Client>();
+		auto client = value.get<Client>();
 		clients.insert(std::make_pair(key, client));
 	}
 }
@@ -92,14 +92,10 @@ int ClientCall(SOCKET clientSocket, SOCKADDR_IN client)
 			break;
 		}
 		std::cout << reply << '\n';
-		system("pause");
-		std::transform(reply.begin(), reply.end(), reply.begin(), ::toupper);
-		
 		// Check if client wants to quit
 		if (reply == "QUIT")
 		{
-			message = "400 BYE";
-			send(clientSocket, message.data(), message.length() + 1, 0);
+			send(clientSocket, "400 BYE", sizeof("400 BYE"), 0);
 			std::cout << "Bye, client...\n\n";
 			return closesocket(clientSocket);
 		}
@@ -109,33 +105,27 @@ int ClientCall(SOCKET clientSocket, SOCKADDR_IN client)
 		auto find_loc = [&](pair& p) { return p.second.get_location() == reply; };
 		auto it = std::find_if(theaters.begin(), theaters.end(), find_loc);
 
-		// If theater exists, send number of shows
-		// not yet recommended, and with available seats
-		if (it != theaters.end())
+		message = std::to_string(it != theaters.end());
+		send(clientSocket, message.data(), message.length() + 1, 0);
+
+		// Check shows in said genre
+		auto& theater = (*it).second;
+		auto not_rec = [&](Show& show) {
+			return !clients[ip_addr].been_recommended(show.id)
+				&& show.available_seats > 0;
+		};
+		int no_shows = std::count_if(theater.shows.begin(), theater.shows.end(), not_rec);
+		message = std::to_string(no_shows);
+		send(clientSocket, message.data(), message.length() + 1, 0);
+		// Send show info in JSON format
+		for (auto& show : theater.shows)
 		{
-			auto& theater = (* it).second;
-			auto not_rec = [&](Show& show) {
-				return !clients[ip_addr].been_recommended(show.id)
-					&& show.available_seats > 0;
-			};
-			int no_shows = std::count_if(theater.shows.begin(), theater.shows.end(), not_rec);
-			message = std::to_string(no_shows);
-			send(clientSocket, message.data(), message.length() + 1, 0);
-			// Send show info in JSON format
-			for (auto& show : theater.shows)
+			if (not_rec(show))
 			{
-				if (not_rec(show))
-				{
-					json j(show);
-					message = j.dump();
-					send(clientSocket, message.data(), message.length() + 1, 0);
-				}
+				json j(show);
+				message = j.dump();
+				send(clientSocket, message.data(), message.length() + 1, 0);
 			}
-		}
-		else
-		{
-			message = "-1";
-			send(clientSocket, message.data(), message.length() + 1, 0);
 		}
 	}
 	// Close the socket

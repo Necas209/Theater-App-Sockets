@@ -1,10 +1,10 @@
-theater,location,id,name,datetime,capacity,available_seats
-Teatro de Braga,Braga,1,Hamlet,Sun Aug 8 12:30:00 2023,80,26
-Teatro de Fafe,Fafe,2,Macbeth,Sun Aug 8 12:30:00 2023,80,26
-Teatro de Fafe,Fafe,3,Romeo & Juliet,Sun Aug 8 12:30:00 2024,80,50
-Teatro de Vila Real,Vila Real,4,King Lear,Sun Aug 8 12:30:00 2022,80,30
-Teatro de Braga,Braga,5,The Tempest,Sun Aug 8 12:30:00 2022,80,30
-Teatro de Braga,Braga,6,Tragedy of Othello: The Moor of Venice,Sun Aug 8 12:30:00 2024,80,50
-Teatro de Vila Real,Vila Real,7,The Merchant of Venice,Sun Aug 8 12:30:00 2023,80,26
-Teatro de Vila Real,Vila Real,8,Death of a Salesman,Sun Aug 8 12:30:00 2024,80,50
-Teatro de Fafe,Fafe,9,Rosencrantz and Guildenstern Are Dead,Sun Aug 8 12:30:00 2022,80,30
+theater,location,id,name,genre,datetime,capacity,available_seats
+Teatro de Braga,Braga,6,Tragedy of Othello: The Moor of Venice,Tragedy,Sun Aug 8 12:30:00 2024,80,50
+Teatro de Braga,Braga,5,The Tempest,Comedy,Sun Aug 8 12:30:00 2022,80,30
+Teatro de Vila Real,Vila Real,7,The Merchant of Venice,Comedy,Sun Aug 8 12:30:00 2023,80,26
+Teatro de Fafe,Fafe,9,Rosencrantz and Guildenstern Are Dead,Tragicomedy,Sun Aug 8 12:30:00 2022,80,30
+Teatro de Fafe,Fafe,3,Romeo & Juliet,Tragedy,Sun Aug 8 12:30:00 2024,80,50
+Teatro de Fafe,Fafe,2,Macbeth,Tragedy,Sun Aug 8 12:30:00 2023,80,26
+Teatro de Vila Real,Vila Real,4,King Lear,Tragedy,Sun Aug 8 12:30:00 2022,80,30
+Teatro de Braga,Braga,1,Hamlet,Tragedy,Sun Aug 8 12:30:00 2023,80,26
+Teatro de Vila Real,Vila Real,8,Death of a Salesman,Tragedy,Sun Aug 8 12:30:00 2024,80,50
