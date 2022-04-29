@@ -40,6 +40,12 @@ int askLocation(SOCKET& serverSocket);
 */
 int askGenre(SOCKET& serverSocket);
 /**
+ * @brief Asks client to pick show and number of tickets
+ * @param serverSocket: server socket
+ * @return pair of integers: show ID and number of tickets
+*/
+std::pair<int, int> pickShow(SOCKET& serverSocket);
+/**
 * @brief Asks client if he wishes to quit the call
 * @param serverSocket: server socket
 * @return integer: 0 if client wishes to continue
