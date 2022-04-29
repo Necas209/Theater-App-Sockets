@@ -1,8 +1,5 @@
-/*
-	Simple winsock Server
-*/
-
 #include "utils.h"
+#include <thread>
 
 constexpr auto DS_TEST_PORT = (u_short)68000;
 //constexpr auto MAX_THREADS = 10;
@@ -25,7 +22,6 @@ int main(int argc, char* argv[])
 	WriteTheaters();
 	ReadClientsFromFile();
 	std::cout << '\n';
-	system("pause");
 
 	// Create a socket
 	SOCKET listening = socket(AF_INET, SOCK_STREAM, 0);

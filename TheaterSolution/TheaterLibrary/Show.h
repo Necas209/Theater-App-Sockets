@@ -9,7 +9,7 @@ using json = nlohmann::json;
 class Show
 {
 private:
-	static int id_it;
+	static constexpr char fmt_str[] = "%a %b %d %H:%M:%S %Y";
 public:
 	int id;
 	std::string name;

@@ -1,8 +1,7 @@
 #include "utils.h"
 
-// Function to validate an IP address
-// Returns: bool
-// true if IP address is valid, false if not
+std::list<Show> shows;
+
 bool validateIP(const std::string& ip_addr)
 {
 	std::regex re("^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}"
@@ -10,42 +9,56 @@ bool validateIP(const std::string& ip_addr)
 	return std::regex_match(ip_addr, re);
 }
 
-// Asks client for location and receives confirmation from server
-// Returns: int
-// 0/1 -> 0 if location is not found, 1 otherwise
-// SOCKET_ERROR -> Any error occured during send or recv
 int askLocation(SOCKET& serverSocket)
 {
+	char reply[2000];
 	int ws_result;
-	std::string message, reply;
+	std::string location;
 	
 	std::cout << "Location: ";
-	getline(std::cin, message);
-	transform(message.begin(), message.end(), message.begin(), toupper);
+	getline(std::cin, location);
+	transform(location.begin(), location.end(), location.begin(), toupper);
+	if (location == "QUIT") quitCall(serverSocket);
 
-	ws_result = send(serverSocket, message.data(), message.length() + 1, 0);
-	if (ws_result < 0)
-	{
-		std::cout << "Send failed\n";
-		return SOCKET_ERROR;
-	}
+	ws_result = send(serverSocket, location.data(), location.length() + 1, 0);
+	if (ws_result < 0) return SOCKET_ERROR;
 	std::cout << "Location sent\n\n";	
-	reply.reserve(2000);
-	ws_result = recv(serverSocket, &reply[0], 2000, 0);
-	if (ws_result <= 0)	return SOCKET_ERROR;
-
-	int ret_val = stoi(reply);
+	
+	ws_result = recv(serverSocket, reply, 2000, 0);
+	if (ws_result < 0)	return SOCKET_ERROR;
+	int ret_val = atoi(reply);
 	if (ret_val)
-		std::cout << "Location found\n";
+		std::cout << "Location found.\n";
 	else
-		std::cout << "Location not found\n";
+		std::cout << "Location not found.\n";
 	return ret_val;
 }
 
-// Quit call with server
-// Returns: bool
-// true if client wishes to quit, otherwise false
-bool quitCall(SOCKET& serverSocket)
+int askGenre(SOCKET& serverSocket)
+{
+	int ws_result;
+	char reply[2000];
+	std::string genre;
+
+	std::cout << "Genre: ";
+	getline(std::cin, genre);
+	transform(genre.begin(), genre.end(), genre.begin(), toupper);
+
+	ws_result = send(serverSocket, genre.data(), genre.length() + 1, 0);
+	if (ws_result < 0) return SOCKET_ERROR;
+	std::cout << "Genre sent.\n\n";
+	
+	ws_result = recv(serverSocket, reply, 2000, 0);
+	if (ws_result < 0)	return SOCKET_ERROR;
+	int no_shows = atoi(reply);
+	if (no_shows == 0)
+		std::cout << "There are no shows available.\n";
+	else
+		std::cout << "There are " << no_shows << " show(s) available.\n";
+	return no_shows;
+}
+
+int quitCall(SOCKET& serverSocket)
 {
 	std::string option;
 	char reply[2000];
@@ -57,70 +70,90 @@ bool quitCall(SOCKET& serverSocket)
 		send(serverSocket, "QUIT", sizeof("QUIT"), 0);
 		recv(serverSocket, reply, 2000, 0);
 		std::cout << reply << '\n';
-		return true;
+		exit(1);
 	}
-	return false;
+	return 0;
 }
 
-// Asks client for preferred genre
-// Returns: int
-// >= 0 -> No of shows available in said genre
-// SOCKET_ERROR -> Any error occurred during send or recv
-int askGenre(SOCKET& serverSocket)
+std::pair<int, int> pickShow(SOCKET& serverSocket)
 {
-	int ws_result;
-	std::string genre, reply;
-
-	std::cout << "Genre: ";
-	getline(std::cin, genre);
-	transform(genre.begin(), genre.end(), genre.begin(), toupper);
-
-	ws_result = send(serverSocket, genre.data(), genre.length() + 1, 0);
-	if (ws_result < 0)
+	std::pair<int, int> show_info(-1, -1);
+	int id;
+	
+	std::cout << "Available shows: \n";
+	for (auto& show : shows)
 	{
-		std::cout << "Send failed\n";
-		return SOCKET_ERROR;
+		show.write();
+		std::cout << '\n';
 	}
-	std::cout << "Genre sent\n\n";
-	reply.reserve(2000);
-	ws_result = recv(serverSocket, &reply[0], 2000, 0);
-	if (ws_result <= 0)	return SOCKET_ERROR;
 
-	int no_shows = stoi(reply);
-	std::cout << "There are " << (no_shows == 0 ? "no" : std::to_string(no_shows)) << " shows available\n";
-	return no_shows;
+	std::cout << "Choose show (id): ";
+	std::cin >> id;
+	auto it = std::find_if(shows.begin(), shows.end(), 
+		[&](Show& s) { return s.id == id; });
+	if (it == shows.end())
+	{
+		std::cout << "No show with id " << id << " is available.\n";
+		return show_info;
+	}
+	show_info.first = (*it).id;
+
+	int no_tickets;
+	std::cout << "How many tickets? ";
+	std::cin >> no_tickets;
+	if (no_tickets <= 0)
+	{
+		std::cout << "Invalid number of tickets.\n";
+		return show_info;
+	}
+	else if (no_tickets > (*it).available_seats)
+	{
+		std::cout << "Not enough tickets available.\n";
+		return show_info;
+	}
+	show_info.second = no_tickets;
+	return show_info;
 }
 
 int ServerCall(SOCKET& serverSocket)
 {
-	bool quit = false;
 	std::string message;
 	char server_reply[2000];
-	int ret_val;
+	int ret_val, ws_result = 1;
 
 	// Receive a reply from the server
 	recv(serverSocket, server_reply, 2000, 0);
 	std::cout << server_reply << '\n';
 
-	quit = quitCall(serverSocket);
-	while (!quit)
+	while (true)
 	{
 		// Ask for location
-		while ((ret_val = askLocation(serverSocket)) == 0)
-		{
-			if (quit = quitCall(serverSocket)) break;
-		}
-		if (quit || ret_val == SOCKET_ERROR) break;
+		while ((ret_val = askLocation(serverSocket)) == 0);
+		if (ret_val < 0) break;
 
 		int no_shows = askGenre(serverSocket);
-		if (no_shows == SOCKET_ERROR) break;
+		if (no_shows < 0) break;
 
-		std::list<Show> shows;
 		for (int i = 0; i < no_shows; i++)
 		{
-			recv(serverSocket, server_reply, 2000, 0);
-			json j = server_reply;
+			ws_result = recv(serverSocket, server_reply, 2000, 0);
+			if (ws_result <= 0) break;
+			json j = json::parse(server_reply);
 			shows.push_back(j.get<Show>());
+		}
+		if (ws_result < 0) break;
+
+		auto p = pickShow(serverSocket);
+		if (p.first == -1 || p.second == -1)
+		{
+			std::cout << "Error occurred during show pick.\n";
+		}
+		else
+		{
+			json j{ {"id", p.first},
+					{"no_tickets", p.second} };
+			message = j.dump();
+			ws_result = send(serverSocket, message.data(), message.length() + 1, 0);
 		}
 	}
 	// Close the socket

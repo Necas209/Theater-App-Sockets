@@ -2,7 +2,9 @@
 
 Show::Show()
 {
-	id = id_it++;
+	//time_t t;
+	//time(&t);
+	//localtime_s(&datetime, &t);
 	capacity = 0;
 	available_seats = 0;
 }
@@ -15,7 +17,6 @@ Show::Show(int id, std::string name, std::string genre, tm datetime, int capacit
 	this->datetime = datetime;
 	this->capacity = capacity;
 	this->available_seats = available_seats;
-	id_it = id + 1;
 }
 
 Show::~Show()
@@ -24,22 +25,24 @@ Show::~Show()
 
 void Show::write()
 {
-	std::cout << name << "; " << genre << "; ";
-	std::cout << std::put_time(&datetime, "%c") << "; ";
-	std::cout << capacity << "; " << available_seats << "; ";
+	std::cout << '(' << id << ") -> ";
+	std::cout << name << " | " << genre << " | ";
+	std::cout << std::put_time(&datetime, fmt_str) << '\n';
+	std::cout << "Capacity: " << capacity << '\n';
+	std::cout << "Available seats: " << available_seats << '\n';
 }
 
 void Show::write_file(std::ofstream& ofs)
 {
 	ofs << id << ',' << name << ',' << genre << ',';
-	ofs << std::put_time(&datetime, "%c") << ',';
+	ofs << std::put_time(&datetime, fmt_str) << ',';
 	ofs << ',' << capacity << ',' << available_seats;
 }
 
 void to_json(json& j, const Show& s)
 {
 	std::ostringstream ss;
-	ss << std::put_time(&s.datetime, "%c");
+	ss << std::put_time(&s.datetime, Show::fmt_str);
 	j = json{ {"id", s.id},
 		{"name", s.name},
 		{"genre", s.genre},
@@ -57,7 +60,7 @@ void from_json(const json& j, Show& s)
 	j.at("genre").get_to(s.genre);
 	j.at("datetime").get_to(aux);
 	std::istringstream ss{ aux };
-	ss >> std::get_time(&s.datetime, "%a %b %d %H:%M:%S %Y");
+	ss >> std::get_time(&s.datetime, Show::fmt_str);
 	j.at("capacity").get_to(s.capacity);
 	j.at("available_seats").get_to(s.available_seats);
 }

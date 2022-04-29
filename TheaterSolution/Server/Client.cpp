@@ -4,9 +4,9 @@ Client::Client()
 {
 }
 
-Client::Client(std::string ip)
-	:ip(ip)
+Client::Client(std::string ip_addr)
 {
+	this->ip_addr = ip_addr;
 }
 
 Client::~Client()
@@ -21,14 +21,14 @@ bool Client::been_recommended(const int id)
 }
 
 void to_json(json& j, const Client& c) {
-	j = json{ {"ip", c.ip},
+	j = json{ {"ip_addr", c.ip_addr},
 		{"showsSeen", c.showsSeen},
-		{"showsRecommended", c.showsRec}
+		{"showsRec", c.showsRec}
 	};
 }
 
 void from_json(const json& j, Client& c) {
-	j.at("ip").get_to(c.ip);
+	j.at("ip_addr").get_to(c.ip_addr);
 	j.at("showsSeen").get_to(c.showsSeen);
-	j.at("showsRecommended").get_to(c.showsRec);
+	j.at("showsRec").get_to(c.showsRec);
 }
