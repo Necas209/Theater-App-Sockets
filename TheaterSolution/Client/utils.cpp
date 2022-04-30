@@ -26,8 +26,11 @@ int askLocation(SOCKET& serverSocket, std::string& location)
 	j = json::parse(msg.content);
 	auto locations = j.get<std::set<std::string>>();
 	int n = locations.size();
+	if (n == 0) {
+		std::cout << "No locations available.\n";
+		return 0;
+	}
 	do {
-		system("cls");
 		int i = 0;
 		std::cout << "Available locations:\n";
 		for (const auto& location : locations)
@@ -59,8 +62,11 @@ int askGenre(SOCKET& serverSocket, std::string& location, std::string& genre)
 	j = json::parse(msg.content);
 	auto genres = j.get<std::set<std::string>>();
 	int n = genres.size();
+	if (n == 0) {
+		std::cout << "No genres available.\n";
+		return 0;
+	}
 	do {
-		system("cls");
 		int i = 0;
 		std::cout << "Available genres:\n";
 		for (const auto& genre : genres)
@@ -136,6 +142,7 @@ int buyTickets(SOCKET& serverSocket)
 	// Get shows
 	char reply[2000];
 	ret_val = recv(serverSocket, reply, 2000, 0);
+	if (ret_val <= 0) return SOCKET_ERROR;
 	msg = json::parse(reply).get<Message>();
 	int no_shows = std::stoi(msg.content);
 	for (int i = 0; i < no_shows; i++)
@@ -147,6 +154,11 @@ int buyTickets(SOCKET& serverSocket)
 		shows.push_back(j.get<Show>());
 	}
 	// Pick show
+	if (shows.size() == 0)
+	{
+		std::cout << "No available shows.\n";
+		return 0;
+	}
 	auto p = pickShow(serverSocket);
 	if (p.first == -1 || p.second == -1)
 	{
@@ -196,7 +208,6 @@ int ServerCall(SOCKET& serverSocket)
 			std::cout << "Invalid option. Please try again.\n";
 			break;
 		}
-		system("cls");
 	}
 	// Close the socket
 	closesocket(serverSocket);
