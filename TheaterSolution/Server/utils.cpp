@@ -134,7 +134,8 @@ int buyTickets(SOCKET& clientSocket, Message& msg, const std::string& ip_addr)
 	// Update available seats and client's seen shows
 	if (id != -1 && no_tickets != -1)
 	{
-		auto show_it = std::find_if((*it).shows.begin(), (*it).shows.end(), [&](Show& s) {return s.id == id; });
+		auto show_it = std::find_if((*it).shows.begin(), (*it).shows.end(), 
+			[&](Show& s) {return s.id == id; });
 		clients[ip_addr].showsSeen.push_back(id);
 		(*show_it).available_seats -= no_tickets;
 	}
@@ -172,12 +173,24 @@ int ClientCall(SOCKET clientSocket, SOCKADDR_IN client)
 			ret_val = buyTickets(clientSocket, msg, ip_addr);
 			break;
 		case CODE::QUIT:
-			ret_val = send(clientSocket, "400 BYE", sizeof("400 BYE"), 0);
-			std::cout << "Bye, client...\n\n";
+			ret_val = quitCall(clientSocket);
+			break;
+		default:
+			std::cout << "Invalid message code.\n";
 			break;
 		}
 	}
 	// Close the socket
 	closesocket(clientSocket);
+	return ret_val;
+}
+
+int quitCall(SOCKET& clientSocket)
+{
+	Message msg(CODE::QUIT, "400 BYE");
+	json j = msg;
+	std::string s = j.dump();
+	int ret_val = send(clientSocket, s.data(), s.length() + 1, 0);
+	std::cout << "Bye, client...\n\n";
 	return ret_val;
 }

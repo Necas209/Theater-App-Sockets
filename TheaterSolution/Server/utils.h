@@ -75,3 +75,9 @@ int buyTickets(SOCKET& clientSocket, Message& msg, const std::string& ip_addr);
 * @return integer: the call state
 */
 int ClientCall(SOCKET clientSocket, SOCKADDR_IN client);
+/**
+ * @brief Quits call with client
+ * @param clientSocket: client socket
+ * @return integer: send return value
+*/
+int quitCall(SOCKET& clientSocket);

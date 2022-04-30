@@ -202,7 +202,7 @@ int ServerCall(SOCKET& serverSocket)
 			ret_val = buyTickets(serverSocket);
 			break;
 		case 2:
-			quitCall(serverSocket);
+			ret_val = quitCall(serverSocket);
 			break;
 		default:
 			std::cout << "Invalid option. Please try again.\n";
@@ -223,9 +223,13 @@ int quitCall(SOCKET& serverSocket)
 	getline(std::cin, option);
 	if (option == "y")
 	{
-		send(serverSocket, "QUIT", sizeof("QUIT"), 0);
+		Message msg(CODE::QUIT, "QUIT");
+		json j = msg;
+		std::string s = j.dump();
+		send(serverSocket, s.data(), s.length() + 1, 0);
 		recv(serverSocket, reply, 2000, 0);
-		std::cout << reply << '\n';
+		msg = json::parse(reply).get<Message>();
+		std::cout << msg.content << '\n';
 		exit(1);
 	}
 	return 0;
