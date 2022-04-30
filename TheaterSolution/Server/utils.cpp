@@ -23,7 +23,7 @@ void ReadTheatersFromFile(const char* filename)
 void WriteTheatersToFile(const char* filename)
 {
 	std::ofstream ofs{ filename };
-	json j(theaters);
+	json j = theaters;
 	ofs << j;
 }
 
@@ -38,7 +38,7 @@ void ReadClientsFromFile(const char* filename)
 void WriteClientsToFile(const char* filename)
 {
 	std::ofstream ofs{ filename };
-	json j(clients);
+	json j = clients;
 	ofs << j;
 }
 

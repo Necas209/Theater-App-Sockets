@@ -2,7 +2,7 @@
 #include <thread>
 
 constexpr auto DS_TEST_PORT = (u_short)68000;
-//constexpr auto MAX_THREADS = 10;
+constexpr auto MAX_THREADS = 1;
 
 int main(int argc, char* argv[])
 {
@@ -50,7 +50,8 @@ int main(int argc, char* argv[])
 	// Client Communication
 	SOCKET clientSocket;
 	std::list<std::thread> threads;
-	while ((clientSocket = accept(listening, (SOCKADDR*)&client, &clientSize)) != SOCKET_ERROR)
+	int i = 0;
+	while (MAX_THREADS > i++ && (clientSocket = accept(listening, (SOCKADDR*)&client, &clientSize)) != SOCKET_ERROR)
 	{
 		threads.emplace_back(ClientCall, clientSocket, client);
 	}
