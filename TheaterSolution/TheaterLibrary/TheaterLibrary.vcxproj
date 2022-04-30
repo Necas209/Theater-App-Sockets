@@ -570,10 +570,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="json.hpp" />
+    <ClInclude Include="Message.h" />
     <ClInclude Include="Show.h" />
     <ClInclude Include="Theater.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Message.cpp" />
     <ClCompile Include="Show.cpp" />
     <ClCompile Include="Theater.cpp" />
   </ItemGroup>

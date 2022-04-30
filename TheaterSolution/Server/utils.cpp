@@ -2,6 +2,7 @@
 
 std::list<Theater> theaters;
 std::map<std::string, Client> clients;
+std::mutex tickets_mutex;
 
 void WriteTheaters()
 {
@@ -41,11 +42,110 @@ void WriteClientsToFile(const char* filename)
 	ofs << j;
 }
 
+int sendLocations(SOCKET& clientSocket)
+{
+	std::set<std::string> locations;
+	for (auto& theater : theaters)
+	{
+		locations.insert(theater.location);
+	}
+	json j = locations;
+	Message msg(CODE::GET_LOCATIONS, j.dump());
+	json k = msg;
+	std::string s = k.dump();
+	return send(clientSocket, s.data(), s.length() + 1, 0);
+}
+
+int sendGenres(SOCKET& clientSocket, Message& msg)
+{
+	std::string location = msg.content;
+	auto it = std::find_if(theaters.begin(), theaters.end(), [&](Theater& t) {return t.location == location; });
+	if (it == theaters.end())
+		return -1;
+
+	std::set<std::string> genres;
+	for (auto& show : (*it).shows)
+	{
+		genres.insert(show.genre);
+	}
+	json j = genres;
+	msg = Message(CODE::GET_GENRES, j.dump());
+	json k = msg;
+	std::string s = k.dump();
+	return send(clientSocket, s.data(), s.length() + 1, 0);
+}
+
+int sendShows(SOCKET& clientSocket, Message& msg, const std::string& ip_addr, std::list<Theater>::iterator& it)
+{
+	json j = json::parse(msg.content);
+	std::string location, genre;
+	j.at("location").get_to(location);
+	j.at("genre").get_to(genre);
+	// Find theater in given location
+	it = std::find_if(theaters.begin(), theaters.end(), [&](Theater& t) {return t.location == location; });
+	if (it != theaters.end())
+	{
+		// Check shows in given genre
+		auto not_rec = [&](Show& show) {
+			return show.available_seats > 0
+				&& show.genre == genre
+				&& !clients[ip_addr].been_recommended(show.id);
+		};
+		// Count number of shows
+		auto no_shows = std::count_if((*it).shows.begin(), (*it).shows.end(), not_rec);
+		// Send information to client
+		json j = Message(CODE::GET_SHOWS, std::to_string(no_shows));
+		std::string s = j.dump();
+		int ret_val = send(clientSocket, s.data(), s.length() + 1, 0);
+		if (ret_val <= 0) return SOCKET_ERROR;
+		// Send show info in JSON format
+		for (auto& show : (*it).shows)
+		{
+			if (not_rec(show))
+			{
+				json j = show;
+				json k = Message(CODE::GET_SHOWS, j.dump());
+				s = k.dump();
+				int ret_val = send(clientSocket, s.data(), s.length() + 1, 0);
+				if (ret_val <= 0) return SOCKET_ERROR;
+				clients[ip_addr].showsRec.push_back(show.id);
+			}
+		}
+	}
+	return 0;
+}
+
+int buyTickets(SOCKET& clientSocket, Message& msg, const std::string& ip_addr)
+{
+	std::list<Theater>::iterator it;
+	// Send available shows to client
+	std::lock_guard<std::mutex> guard(tickets_mutex);
+	int ret_val = sendShows(clientSocket, msg, ip_addr, it);
+	if (ret_val < 0) return SOCKET_ERROR;
+	// Get ticket info from client
+	char reply[2000];
+	ret_val = recv(clientSocket, reply, 2000, 0);
+	if (ret_val <= 0) return SOCKET_ERROR;
+	// Parse ticket info
+	Message m = json::parse(reply).get<Message>();
+	json j = json::parse(m.content);
+	int id = j.at("id").get<int>();
+	int no_tickets = j.at("no_tickets").get<int>();
+	// Update available seats and client's seen shows
+	if (id != -1 && no_tickets != -1)
+	{
+		auto show_it = std::find_if((*it).shows.begin(), (*it).shows.end(), [&](Show& s) {return s.id == id; });
+		clients[ip_addr].showsSeen.push_back(id);
+		(*show_it).available_seats -= no_tickets;
+	}
+	return ret_val;
+}
+
 int ClientCall(SOCKET clientSocket, SOCKADDR_IN client)
 {
-	int ret_val = 0;
-	char buf[20]{};
-	std::string message, reply;
+	int ret_val = 1;
+	char buf[20]{}, reply[2000];
+	std::string message;
 
 	const std::string ip_addr(inet_ntop(client.sin_family, &client.sin_addr, buf, 20));
 	if (!clients.contains(ip_addr))
@@ -53,72 +153,29 @@ int ClientCall(SOCKET clientSocket, SOCKADDR_IN client)
 		clients.insert(std::make_pair(ip_addr, Client(ip_addr)));
 	}
 
-	send(clientSocket, "100 OK", sizeof("100 OK"), 0);
-	reply.reserve(2000);
-	while (true)
+	ret_val = send(clientSocket, "100 OK", sizeof("100 OK"), 0);
+	while (ret_val > 0)
 	{
-		// Receive location
-		int bytesReceived = recv(clientSocket, &reply[0], 2000, 0);
-		if (bytesReceived == SOCKET_ERROR)
+		int ret_val = recv(clientSocket, reply, 2000, 0);
+		if (ret_val <= 0) break;
+		Message msg = json::parse(reply).get<Message>();
+
+		switch (msg.code)
 		{
-			std::cout << "\nReceive error!\n";
-			ret_val = SOCKET_ERROR;
+		case CODE::GET_LOCATIONS:
+			ret_val = sendLocations(clientSocket);
 			break;
-		}
-		if (bytesReceived == 0)
-		{
-			std::cout << "\nClient disconnected!\n";
-			ret_val = 1;
+		case CODE::GET_GENRES:
+			ret_val = sendGenres(clientSocket, msg);
 			break;
-		}
-		std::cout << reply << '\n';
-		// Check if client wants to quit
-		if (reply == "QUIT")
-		{
-			send(clientSocket, "400 BYE", sizeof("400 BYE"), 0);
+		case CODE::GET_SHOWS:
+			ret_val = buyTickets(clientSocket, msg, ip_addr);
+			break;
+		case CODE::QUIT:
+			ret_val = send(clientSocket, "400 BYE", sizeof("400 BYE"), 0);
 			std::cout << "Bye, client...\n\n";
-			return closesocket(clientSocket);
+			break;
 		}
-
-		// Check for theaters in said location
-		auto find_loc = [&](Theater& p) { return p.get_location() == reply; };
-		// iterator that points to theater
-		auto it = std::find_if(theaters.begin(), theaters.end(), find_loc);
-
-		message = std::to_string(it != theaters.end());
-		send(clientSocket, message.data(), message.length() + 1, 0);
-
-		recv(clientSocket, &reply[0], 2000, 0);
-		
-		// Check shows in said genre
-		auto not_rec = [&](Show& show) {
-			return show.available_seats > 0
-				&& show.genre == reply
-				&& !clients[ip_addr].been_recommended(show.id);
-		};
-
-		auto no_shows = std::count_if((*it).shows.begin(), (*it).shows.end(), not_rec);
-		message = std::to_string(no_shows);
-		send(clientSocket, message.data(), message.length() + 1, 0);
-		// Send show info in JSON format
-		for (auto& show : (*it).shows)
-		{
-			if (not_rec(show))
-			{
-				json j(show);
-				message = j.dump();
-				send(clientSocket, message.data(), message.length() + 1, 0);
-				clients[ip_addr].showsRec.push_back(show.id);
-			}
-		}
-
-		// Receive show info
-		recv(clientSocket, &reply[0], 2000, 0);
-		json j = json::parse(reply);
-		auto p = j.get<std::pair<int, int>>();
-		auto show_it = std::find_if((*it).shows.begin(), (*it).shows.end(), [&](Show& s) {return s.id == p.first; });
-		clients[ip_addr].showsSeen.push_back(p.first);
-		(*show_it).available_seats -= p.second;
 	}
 	// Close the socket
 	closesocket(clientSocket);

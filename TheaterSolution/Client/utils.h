@@ -2,13 +2,13 @@
 #include <iostream>
 #include <string>
 #include <list>
+#include <set>
 #include <regex>
 #include <WinSock2.h>
+#include "Message.h"
 #include "Show.h"
 
 #pragma comment(lib, "ws2_32.lib")
-
-enum { ERR = -1, FAIL, SUCCESS };
 
 extern std::list<Show> shows;
 
@@ -28,20 +28,23 @@ bool validateIP(const std::string& ip_addr);
  * @brief Asks client for location, and
  * receives confirmation from server
  * @param serverSocket: server socket
+ * @param location: string to store location in
  * @return integer: 0/1 if server received location,
 	SOCKET_ERROR if any error occurred
 */
-int askLocation(SOCKET& serverSocket);
+int askLocation(SOCKET& serverSocket, std::string& location);
 /**
  * @brief Asks client for show genre, and
  * receives number of available shows from server
  * @param serverSocket: server socket
+  * @param genre: string to store genre in
  * @return integer: number of available shows, otherwise SOCKET_ERROR
 */
-int askGenre(SOCKET& serverSocket);
+int askGenre(SOCKET& serverSocket, std::string& location, std::string& genre);
 /**
  * @brief Asks client to pick show and number of tickets
  * @param serverSocket: server socket
+ * @param location: location picked by client
  * @return pair of integers: show ID and number of tickets
 */
 std::pair<int, int> pickShow(SOCKET& serverSocket);
