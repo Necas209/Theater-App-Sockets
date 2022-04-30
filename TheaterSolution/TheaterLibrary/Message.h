@@ -16,7 +16,7 @@ using json = nlohmann::json;
 * 
 * {
 *	"code": GET_LOCATIONS,
-*	"content": null, // or [ "Vila Real", "Fafe" ]
+*	"content": "", // or [ "Vila Real", "Fafe" ]
 * }
 */
 

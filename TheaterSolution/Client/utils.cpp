@@ -88,7 +88,7 @@ std::pair<int, int> pickShow(SOCKET& serverSocket)
 	}
 
 	std::cout << "Choose show (id): ";
-	std::cin >> id;
+	(std::cin >> id).ignore();
 	auto it = std::find_if(shows.begin(), shows.end(), 
 		[&](Show& s) { return s.id == id; });
 	if (it == shows.end())
@@ -96,11 +96,11 @@ std::pair<int, int> pickShow(SOCKET& serverSocket)
 		std::cout << "No show with id " << id << " is available.\n";
 		return show_info;
 	}
-	show_info.first = (*it).id;
+	show_info.first = id;
 
 	int no_tickets;
 	std::cout << "How many tickets? ";
-	std::cin >> no_tickets;
+	(std::cin >> no_tickets).ignore();
 	if (no_tickets <= 0)
 	{
 		std::cout << "Invalid number of tickets.\n";
@@ -157,7 +157,9 @@ int buyTickets(SOCKET& serverSocket)
 			{"no_tickets", p.second} }.dump());
 	json l = msg;
 	s = l.dump();
-	return send(serverSocket, s.data(), s.length() + 1, 0);
+	ret_val = send(serverSocket, s.data(), s.length() + 1, 0);
+	shows.clear();
+	return ret_val;
 }
 
 int ServerCall(SOCKET& serverSocket)
@@ -181,7 +183,7 @@ int ServerCall(SOCKET& serverSocket)
 		std::cout << "Menu:\n";
 		std::cout << "\t1 -> Buy tickets\n";
 		std::cout << "\t2 -> Quit\n";
-		std::cin >> option;
+		(std::cin >> option).ignore();
 		switch (option)
 		{
 		case 1:
