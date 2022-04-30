@@ -190,7 +190,7 @@ int quitCall(SOCKET& clientSocket)
 	Message msg(CODE::QUIT, "400 BYE");
 	json j = msg;
 	std::string s = j.dump();
-	int ret_val = send(clientSocket, s.data(), s.length() + 1, 0);
+	send(clientSocket, s.data(), s.length() + 1, 0);
 	std::cout << "Bye, client...\n\n";
-	return ret_val;
+	return -1;
 }
