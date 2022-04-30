@@ -84,15 +84,18 @@ int askGenre(SOCKET& serverSocket, std::string& location, std::string& genre)
 std::pair<int, int> pickShow(SOCKET& serverSocket)
 {
 	std::pair<int, int> show_info(-1, -1);
-	int id;
-	
+	if (shows.size() == 0)
+	{
+		std::cout << "No available shows.\n";
+		return show_info;
+	}
 	std::cout << "Available shows: \n";
 	for (auto& show : shows)
 	{
 		show.write();
 		std::cout << '\n';
 	}
-
+	int id;
 	std::cout << "Choose show (id): ";
 	(std::cin >> id).ignore();
 	auto it = std::find_if(shows.begin(), shows.end(), 
@@ -154,11 +157,6 @@ int buyTickets(SOCKET& serverSocket)
 		shows.push_back(j.get<Show>());
 	}
 	// Pick show
-	if (shows.size() == 0)
-	{
-		std::cout << "No available shows.\n";
-		return 0;
-	}
 	auto p = pickShow(serverSocket);
 	if (p.first == -1 || p.second == -1)
 	{
