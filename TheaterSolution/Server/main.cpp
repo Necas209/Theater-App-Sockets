@@ -1,8 +1,8 @@
 #include "utils.h"
 #include <thread>
 
-constexpr auto DS_TEST_PORT = (u_short)68000;
-constexpr auto MAX_THREADS = 1;
+constexpr auto DS_TEST_PORT = (USHORT)68000;
+constexpr auto MAX_THREADS = 5;
 
 int main(int argc, char* argv[])
 {
@@ -10,61 +10,48 @@ int main(int argc, char* argv[])
 	// Initialise winsock
 	WSADATA wsData;
 	WORD ver = MAKEWORD(2, 2);
-
 	std::cout << "Initialising Winsock...\n";
 	int wsResult = WSAStartup(ver, &wsData);
 	if (wsResult != 0)
 	{
-		fprintf(stderr, "\nWinsock setup failed! Error Code : %d\n", WSAGetLastError());
+		std::cerr << "\nWinsock setup failed! Error Code : " << WSAGetLastError() << '\n';
 		return 1;
 	}
-	ReadTheatersFromFile();
-	ReadClientsFromFile();
-	std::cout << '\n';
-
+	read_theaters();
+	read_clients();
 	// Create a socket
 	SOCKET listening = socket(AF_INET, SOCK_STREAM, 0);
 	if (listening == INVALID_SOCKET)
 	{
-		fprintf(stderr, "\nSocket creation failed! Error Code : %d\n", WSAGetLastError());
+		std::cerr << "\nSocket creation failed! Error Code : " << WSAGetLastError() << '\n';
 		return 1;
 	}
-
 	std::cout << "\nSocket created.\n";
-
 	// Bind the socket (ip address and port)
 	SOCKADDR_IN hint{};
 	hint.sin_family = AF_INET;
 	hint.sin_port = htons(DS_TEST_PORT);
 	hint.sin_addr.S_un.S_addr = INADDR_ANY;
-
 	bind(listening, (SOCKADDR*)&hint, sizeof(hint));
-
 	// Setup the socket for listening
 	listen(listening, SOMAXCONN);
-
 	// Wait for connection
-	SOCKADDR_IN client{};
-	int clientSize = sizeof(client);
-
-	// Client Communication
+	SOCKADDR_IN client_addr{};
 	SOCKET clientSocket;
 	std::list<std::thread> threads;
 	int i = 0;
-	while (MAX_THREADS > i++ && (clientSocket = accept(listening, (SOCKADDR*)&client, &clientSize)) != SOCKET_ERROR)
+	while (i++ < MAX_THREADS && (clientSocket = accept(listening, (SOCKADDR*)&client_addr, NULL)) != SOCKET_ERROR)
 	{
-		threads.emplace_back(ClientCall, clientSocket, client);
+		threads.emplace_back(main_call, clientSocket, client_addr);
 	}
 	closesocket(listening);
 	for (auto& thread : threads)
 	{
 		thread.join();
 	}
-
 	// Save data to files
-	WriteTheatersToFile();
-	WriteClientsToFile();
-
+	write_theaters();
+	write_clients();
 	// Cleanup winsock
 	WSACleanup();
 	return 0;

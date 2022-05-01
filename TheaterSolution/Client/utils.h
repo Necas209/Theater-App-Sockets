@@ -17,13 +17,13 @@ extern std::list<Show> shows;
  * @param serverSocket: server socket
  * @return integer: the call state
 */
-int ServerCall(SOCKET& serverSocket);
+int main_call(SOCKET& serverSocket);
 /**
  * @brief Validates IP address
  * @param ip_addr: IP address
  * @return boolean: whether IP address is valid or not
 */
-bool validateIP(const std::string& ip_addr);
+bool validate_ip(const std::string& ip_addr);
 /**
  * @brief Asks client for location, and
  * receives confirmation from server
@@ -32,7 +32,7 @@ bool validateIP(const std::string& ip_addr);
  * @return integer: 0/1 if server received location,
 	SOCKET_ERROR if any error occurred
 */
-int askLocation(SOCKET& serverSocket, std::string& location);
+int pick_location(SOCKET& serverSocket, std::string& location);
 /**
  * @brief Asks client for show genre, and
  * receives number of available shows from server
@@ -40,17 +40,17 @@ int askLocation(SOCKET& serverSocket, std::string& location);
   * @param genre: string to store genre in
  * @return integer: number of available shows, otherwise SOCKET_ERROR
 */
-int askGenre(SOCKET& serverSocket, std::string& location, std::string& genre);
+int pick_genre(SOCKET& serverSocket, std::string& location, std::string& genre);
 /**
  * @brief Asks client to pick show and number of tickets
  * @param serverSocket: server socket
  * @param location: location picked by client
  * @return pair of integers: show ID and number of tickets
 */
-std::pair<int, int> pickShow(SOCKET& serverSocket);
+std::pair<int, int> pick_show(SOCKET& serverSocket);
 /**
 * @brief Asks client if he wishes to quit the call
 * @param serverSocket: server socket
 * @return integer: 0 if client wishes to continue
 */
-int quitCall(SOCKET& serverSocket);
+int quit_call(SOCKET& serverSocket);

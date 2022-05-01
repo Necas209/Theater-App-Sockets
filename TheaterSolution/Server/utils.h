@@ -14,43 +14,41 @@ extern std::list<Theater> theaters;
 extern std::map<std::string, Client> clients;
 extern std::mutex tickets_mutex;
 
-/**
- * @brief Writes theaters to console
-*/
-void WriteTheaters();
+using theater_it = std::list<Theater>::iterator;
+
 /**
  * @brief Reads theaters from file
  * @param filename: path to JSON file
 */
-void ReadTheatersFromFile(const char* filename = "shows.json");
+void read_theaters(const char* filename = "shows.json");
 /**
  * @brief Writes theaters to file
  * @param filename: path to JSON file
 */
-void WriteTheatersToFile(const char* filename = "shows.json");
+void write_theaters(const char* filename = "shows.json");
 /**
  * @brief Reads clients from file
  * @param filename: path to JSON file
 */
-void ReadClientsFromFile(const char* filename = "clients.json");
+void read_clients(const char* filename = "clients.json");
 /**
  * @brief Writes clients to file
  * @param filename: path to JSON file
 */
-void WriteClientsToFile(const char* filename = "clients.json");
+void write_clients(const char* filename = "clients.json");
 /**
  * @brief Sends available locations to client
  * @param clientSocket: client socket
  * @return integer: value of send
 */
-int sendLocations(SOCKET& clientSocket);
+int get_locations(SOCKET& clientSocket);
 /**
  * @brief Sends available genres to client
  * @param clientSocket: client socket
  * @param msg: last message received
  * @return integer: value of send
 */
-int sendGenres(SOCKET& clientSocket, Message& msg);
+int get_genres(SOCKET& clientSocket, Message& msg);
 /**
  * @brief Sends available shows to client, given location and genre
  * @param clientSocket: client socket
@@ -59,7 +57,7 @@ int sendGenres(SOCKET& clientSocket, Message& msg);
  * @param it: iterator pointing to chosen theater
  * @return integer: value of send
 */
-int sendShows(SOCKET& clientSocket, Message& msg, const std::string& ip_addr, std::list<Theater>::iterator& it);
+int get_shows(SOCKET& clientSocket, Message& msg, const std::string& ip_addr, theater_it& it);
 /**
  * @brief Processes client's ticket purchase
  * @param clientSocket: client socket
@@ -67,17 +65,17 @@ int sendShows(SOCKET& clientSocket, Message& msg, const std::string& ip_addr, st
  * @param ip_addr: client's IP address
  * @return 
 */
-int buyTickets(SOCKET& clientSocket, Message& msg, const std::string& ip_addr);
+int buy_tickets(SOCKET& clientSocket, Message& msg, const std::string& ip_addr);
 /**
 * @brief Main client call function
 * @param clientSocket: client socket
-* @param client: socket address
+* @param client_addr: socket address
 * @return integer: the call state
 */
-int ClientCall(SOCKET clientSocket, SOCKADDR_IN client);
+int main_call(SOCKET clientSocket, SOCKADDR_IN client_addr);
 /**
  * @brief Quits call with client
  * @param clientSocket: client socket
  * @return integer: send return value
 */
-int quitCall(SOCKET& clientSocket);
+int quit_call(SOCKET& clientSocket);
