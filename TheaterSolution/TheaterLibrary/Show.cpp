@@ -2,21 +2,8 @@
 
 Show::Show()
 {
-	//time_t t;
-	//time(&t);
-	//localtime_s(&datetime, &t);
 	capacity = 0;
 	available_seats = 0;
-}
-
-Show::Show(int id, std::string name, std::string genre, tm datetime, int capacity, int available_seats)
-{
-	this->id = id;
-	this->name = name;
-	this->genre = genre;
-	this->datetime = datetime;
-	this->capacity = capacity;
-	this->available_seats = available_seats;
 }
 
 Show::~Show()
@@ -30,13 +17,6 @@ void Show::write()
 	std::cout << std::put_time(&datetime, fmt_str) << '\n';
 	std::cout << "Capacity: " << capacity << '\n';
 	std::cout << "Available seats: " << available_seats << '\n';
-}
-
-void Show::write_file(std::ofstream& ofs)
-{
-	ofs << id << ',' << name << ',' << genre << ',';
-	ofs << std::put_time(&datetime, fmt_str) << ',';
-	ofs << ',' << capacity << ',' << available_seats;
 }
 
 void to_json(json& j, const Show& s)

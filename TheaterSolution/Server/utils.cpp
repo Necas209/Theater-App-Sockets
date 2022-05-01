@@ -44,8 +44,7 @@ int get_locations(SOCKET& clientSocket)
 	}
 	// Send locations to client
 	json j = locations;
-	Message msg(CODE::GET_LOCATIONS, j.dump());
-	json k = msg;
+	json k = Message(CODE::GET_LOCATIONS, j.dump());
 	auto s = k.dump();
 	return send(clientSocket, s.data(), (int)s.length() + 1, 0);
 }
@@ -66,8 +65,7 @@ int get_genres(SOCKET& clientSocket, Message& msg)
 	}
 	// Send genres to client
 	json j = genres;
-	msg = Message(CODE::GET_GENRES, j.dump());
-	json k = msg;
+	json k = Message(CODE::GET_GENRES, j.dump());
 	auto s = k.dump();
 	return send(clientSocket, s.data(), (int)s.length() + 1, 0);
 }
@@ -126,8 +124,8 @@ int buy_tickets(SOCKET& clientSocket, Message& msg, const std::string& ip_addr)
 	ret_val = recv(clientSocket, reply, 2000, 0);
 	if (ret_val <= 0) return SOCKET_ERROR;
 	// Parse ticket info
-	Message m = json::parse(reply).get<Message>();
-	json j = json::parse(m.content);
+	msg = json::parse(reply).get<Message>();
+	json j = json::parse(msg.content);
 	int id, no_tickets;
 	j.at("id").get_to(id);
 	j.at("no_tickets").get_to(no_tickets);
@@ -153,12 +151,14 @@ int main_call(SOCKET clientSocket, SOCKADDR_IN client_addr)
 	{
 		clients.insert(std::make_pair(ip_addr, Client(ip_addr)));
 	}
-	// Properly start call
-	int ret_val = send(clientSocket, "100 OK", sizeof("100 OK"), 0);
-	char reply[2000];
+	// Send HELLO message
+	json j = Message(CODE::HELLO, "100 OK");
+	auto s = j.dump();
+	int ret_val = send(clientSocket, s.data(), (int)s.length() + 1, 0);
 	while (ret_val > 0)
 	{
 		// Receive next message and parse it
+		char reply[2000];
 		ret_val = recv(clientSocket, reply, 2000, 0);
 		if (ret_val <= 0) break;
 		Message msg = json::parse(reply).get<Message>();
@@ -190,8 +190,7 @@ int main_call(SOCKET clientSocket, SOCKADDR_IN client_addr)
 int quit_call(SOCKET& clientSocket)
 {
 	// Send 400 BYE message to client
-	Message msg(CODE::QUIT, "400 BYE");
-	json j = msg;
+	json j = Message(CODE::QUIT, "400 BYE");
 	auto s = j.dump();
 	send(clientSocket, s.data(), (int)s.length() + 1, 0);
 	std::cout << "Bye, client...\n\n";

@@ -12,8 +12,7 @@ bool validate_ip(const std::string& ip_addr)
 int pick_location(SOCKET& serverSocket, std::string& location)
 {
 	// Send request for available locations
-	Message msg(CODE::GET_LOCATIONS, "");
-	json j = msg;
+	json j = Message(CODE::GET_LOCATIONS, "");
 	auto message = j.dump();
 	int ret_val = send(serverSocket, message.data(), (int)message.length() + 1, 0);
 	if (ret_val <= 0) return SOCKET_ERROR;
@@ -22,11 +21,9 @@ int pick_location(SOCKET& serverSocket, std::string& location)
 	ret_val = recv(serverSocket, reply, 2000, 0);
 	if (ret_val <= 0) return SOCKET_ERROR;
 	// Parse response
-	j = json::parse(reply);
-	msg = j.get<Message>();
-	j = json::parse(msg.content);
+	Message msg = json::parse(reply).get<Message>();
 	std::set<std::string> locations;
-	j.get_to(locations);
+	json::parse(msg.content).get_to(locations);
 	// Check number of locations received
 	auto n = locations.size();
 	if (n == 0) {
@@ -53,8 +50,7 @@ int pick_location(SOCKET& serverSocket, std::string& location)
 int pick_genre(SOCKET& serverSocket, std::string& location, std::string& genre)
 {
 	// Send request for available genres
-	Message msg(CODE::GET_GENRES, location);
-	json j = msg;
+	json j = Message(CODE::GET_GENRES, location);
 	auto message = j.dump();
 	int ret_val = send(serverSocket, message.data(), (int)message.length() + 1, 0);
 	if (ret_val <= 0) return SOCKET_ERROR;
@@ -63,11 +59,9 @@ int pick_genre(SOCKET& serverSocket, std::string& location, std::string& genre)
 	ret_val = recv(serverSocket, reply, 2000, 0);
 	if (ret_val <= 0) return SOCKET_ERROR;
 	// Parse response
-	j = json::parse(reply);
-	msg = j.get<Message>();
-	j = json::parse(msg.content);
+	Message msg = json::parse(reply).get<Message>();
 	std::set<std::string> genres;
-	j.get_to(genres);
+	json::parse(msg.content).get_to(genres);
 	// Check number of genres
 	auto n = genres.size();
 	if (n == 0) {
@@ -147,9 +141,8 @@ int buyTickets(SOCKET& serverSocket)
 	ret_val = pick_genre(serverSocket, location, genre);
 	if (ret_val < 0) return ret_val;
 	// Ask for shows
-	Message msg(CODE::GET_SHOWS, json{ {"location", location},
+	json j = Message(CODE::GET_SHOWS, json{ {"location", location},
 			{"genre", genre} }.dump());
-	json j = msg;
 	auto s = j.dump();
 	ret_val = send(serverSocket, s.data(), (int)s.length() + 1, 0);
 	if (ret_val <= 0) return SOCKET_ERROR;
@@ -157,7 +150,7 @@ int buyTickets(SOCKET& serverSocket)
 	char reply[2000];
 	ret_val = recv(serverSocket, reply, 2000, 0);
 	if (ret_val <= 0) return SOCKET_ERROR;
-	msg = json::parse(reply).get<Message>();
+	Message msg = json::parse(reply).get<Message>();
 	int no_shows = std::stoi(msg.content);
 	// Get shows
 	for (int i = 0; i < no_shows; i++)
@@ -165,8 +158,7 @@ int buyTickets(SOCKET& serverSocket)
 		ret_val = recv(serverSocket, reply, 2000, 0);
 		if (ret_val <= 0) return SOCKET_ERROR;
 		Message msg = json::parse(reply).get<Message>();
-		j = json::parse(msg.content);
-		shows.push_back(j.get<Show>());
+		shows.push_back(json::parse(msg.content).get<Show>());
 	}
 	// Pick show
 	auto p = pick_show(serverSocket);
@@ -176,24 +168,24 @@ int buyTickets(SOCKET& serverSocket)
 	}
 	// Send show/ticket info
 	shows.clear(); // Make sure shows is cleared
-	msg = Message(CODE::BUY_TICKETS, json{ {"id", p.first},
+	json k = Message(CODE::BUY_TICKETS, json{ {"id", p.first},
 			{"no_tickets", p.second} }.dump());
-	json k = msg;
 	s = k.dump();
 	return send(serverSocket, s.data(), (int)s.length() + 1, 0);
 }
 
 int main_call(SOCKET& serverSocket)
 {
-	// Receive a reply from the server
-	char server_reply[2000];
-	int ret_val = recv(serverSocket, server_reply, 2000, 0);
+	// Receive HELLO message
+	char reply[2000];
+	int ret_val = recv(serverSocket, reply, 2000, 0);
 	if (ret_val <= 0)
 	{
 		closesocket(serverSocket);
 		return ret_val;
 	}
-	std::cout << server_reply << '\n';
+	Message msg = json::parse(reply).get<Message>();
+	std::cout << msg.content << '\n';
 	// Main menu
 	while (ret_val != SOCKET_ERROR)
 	{
@@ -231,14 +223,13 @@ int quit_call(SOCKET& serverSocket)
 	if (option == "y")
 	{
 		// Send request to end call
-		Message msg(CODE::QUIT, "QUIT");
-		json j = msg;
+		json j = Message(CODE::QUIT, "QUIT");
 		std::string s = j.dump();
 		send(serverSocket, s.data(), (int)s.length() + 1, 0);
 		// Receive responde to end call
 		char reply[2000];
 		recv(serverSocket, reply, 2000, 0);
-		msg = json::parse(reply).get<Message>();
+		Message msg = json::parse(reply).get<Message>();
 		std::cout << msg.content << '\n';
 		exit(1);
 	}
