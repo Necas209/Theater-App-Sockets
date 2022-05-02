@@ -2,7 +2,7 @@
 #include <thread>
 
 constexpr auto DS_TEST_PORT = (USHORT)68000;
-constexpr auto MAX_THREADS = 50;
+constexpr auto MAX_THREADS = 5;
 
 int main(int argc, char* argv[])
 {

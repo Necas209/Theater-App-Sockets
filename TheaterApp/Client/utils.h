@@ -25,20 +25,17 @@ int main_call(SOCKET& serverSocket);
 */
 bool validate_ip(const std::string& ip_addr);
 /**
- * @brief Asks client for location, and
- * receives confirmation from server
+ * @brief Asks client for location
  * @param serverSocket: server socket
  * @param location: string to store location in
- * @return integer: 0/1 if server received location,
-	SOCKET_ERROR if any error occurred
+ * @return integer: call state
 */
 int pick_location(SOCKET& serverSocket, std::string& location);
 /**
- * @brief Asks client for show genre, and
- * receives number of available shows from server
+ * @brief Asks client for show genre
  * @param serverSocket: server socket
   * @param genre: string to store genre in
- * @return integer: number of available shows, otherwise SOCKET_ERROR
+ * @return integer: call state
 */
 int pick_genre(SOCKET& serverSocket, std::string& location, std::string& genre);
 /**
@@ -47,7 +44,13 @@ int pick_genre(SOCKET& serverSocket, std::string& location, std::string& genre);
  * @param location: location picked by client
  * @return pair of integers: show ID and number of tickets
 */
-std::pair<int, int> pick_show(SOCKET& serverSocket);
+auto& pick_show(SOCKET& serverSocket);
+/**
+* @brief Buy tickets
+* @param serverSocket: server socket
+* @return integer: call state
+*/
+int buy_tickets(SOCKET& serverSocket);
 /**
 * @brief Asks client if he wishes to quit the call
 * @param serverSocket: server socket

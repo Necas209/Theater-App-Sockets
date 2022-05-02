@@ -7,7 +7,7 @@ int main(int argc, char* argv[])
 {
 	WSADATA wsa;
 	SOCKET serverSocket;
-	SOCKADDR_IN server{};
+	SOCKADDR_IN server_addr{};
 	int ws_result;
 	SetConsoleCP(CP_UTF8);
 	// Initialise winsock
@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 	std::cout << "Socket created.\n";
-	// Ask client for server ip address
+	// Ask client for server IP address
 	std::string ip_addr;
 	std::cout << "Server IP address: ";
 	getline(std::cin, ip_addr);
@@ -36,12 +36,12 @@ int main(int argc, char* argv[])
 		std::cout << "Invalid IP address.\n";
 		std::cout << "IP address will default to " << ip_addr << ".\n";
 	}
-	// create the socket address (ip address and port)
-	server.sin_family = AF_INET;
-	inet_pton(server.sin_family, ip_addr.data(), &server.sin_addr.s_addr);
-	server.sin_port = htons(DS_TEST_PORT);
+	// create the socket address (IP address and port)
+	server_addr.sin_family = AF_INET;
+	inet_pton(server_addr.sin_family, ip_addr.data(), &server_addr.sin_addr.s_addr);
+	server_addr.sin_port = htons(DS_TEST_PORT);
 	// Connect to remote server
-	ws_result = connect(serverSocket, (SOCKADDR*)&server, sizeof(server));
+	ws_result = connect(serverSocket, (SOCKADDR*)&server_addr, sizeof(server_addr));
 	if (ws_result < 0)
 	{
 		std::cout << "Connection error\n";

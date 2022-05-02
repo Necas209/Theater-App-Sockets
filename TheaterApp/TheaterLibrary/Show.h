@@ -7,6 +7,7 @@ using json = nlohmann::json;
 class Show
 {
 private:
+	// Example: "Sun Aug 08 12:30:00 2023"
 	static constexpr char fmt_str[] = "%a %b %d %H:%M:%S %Y";
 public:
 	// attributes

@@ -5,23 +5,6 @@
 
 using json = nlohmann::json;
 
-/**
-* Type of Message:
-* 
-* -> GET_LOCATIONS: returns set of locations
-* -> GET_GENRES: returns set of genres
-* -> GET_SHOWS: returns list of shows
-* -> BUY_TICKETS: updates show and client's information, to reflect ticket purchase
-* -> QUIT: quits call
-* 
-* Message structure:
-* 
-* {
-*	"code": GET_LOCATIONS, // Integer value corresponding to given code
-*	"content": "", // or [ "Vila Real", "Fafe" ]
-* }
-*/
-
 const enum struct CODE : int {
 	HELLO,
 	GET_LOCATIONS,
@@ -32,7 +15,22 @@ const enum struct CODE : int {
 };
 
 extern const std::map<CODE, const char*> codename;
-
+/**
+* Type of Message:
+*
+* -> GET_LOCATIONS: returns set of locations
+* -> GET_GENRES: returns set of genres
+* -> GET_SHOWS: returns list of shows
+* -> BUY_TICKETS: updates show and client's information, to reflect ticket purchase
+* -> QUIT: quits call
+*
+* Message structure:
+*
+* {
+*	"code": GET_LOCATIONS, // Integer value corresponding to given code
+*	"content": "", // or [ "Vila Real", "Fafe" ]
+* }
+*/
 class Message
 {
 public:

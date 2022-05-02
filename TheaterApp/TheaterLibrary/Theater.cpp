@@ -9,15 +9,6 @@ Theater::~Theater()
 	shows.clear();
 }
 
-void Theater::write()
-{
-	std::cout << name << " | " << location << "\nShows:\n";
-	for (auto& show : shows)
-	{
-		show.write();
-	}
-}
-
 void to_json(json& j, const Theater& t)
 {
 	j = json{ {"name", t.name},

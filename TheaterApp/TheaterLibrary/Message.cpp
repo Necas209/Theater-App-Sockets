@@ -40,6 +40,5 @@ void from_json(const json& j, Message& m)
 	j.at("code").get_to(m.code);
 	j.at("content").get_to(m.content);
 	std::istringstream ss{ j.at("stamp").get<std::string>() };
-	// 2022-05-02 19:26:42
 	ss >> std::get_time(&m.stamp, Message::fmt_str);
 }

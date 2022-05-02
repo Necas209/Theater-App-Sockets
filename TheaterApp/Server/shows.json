@@ -4,7 +4,7 @@
         "name": "Teatro de Braga",
         "shows": [
             {
-                "available_seats": 50,
+                "available_seats": 40,
                 "capacity": 80,
                 "datetime": "Sun Aug 08 12:30:00 2024",
                 "genre": "Tragedy",
@@ -12,7 +12,7 @@
                 "name": "Tragedy of Othello: The Moor of Venice"
             },
             {
-                "available_seats": 26,
+                "available_seats": 10,
                 "capacity": 80,
                 "datetime": "Sun Aug 08 12:30:00 2022",
                 "genre": "Comedy",

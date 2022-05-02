@@ -15,18 +15,16 @@ void log_message(Message msg, SENDER s)
 	const std::string path = log_path(log);
 	// Check if file exists
 	// If so, append rather than write
-	std::ofstream ofs;
 	if (std::filesystem::exists(path))
 	{
-		ofs.open(path, std::ios_base::app);
+		std::ofstream ofs{ path, std::ios_base::app };
 		ofs << log;
 	}
 	else
 	{
-		ofs.open(path);
+		std::ofstream ofs{ path };
 		ofs << log;
 	}
-	ofs.close();
 }
 
 void read_theaters(const char* filename)

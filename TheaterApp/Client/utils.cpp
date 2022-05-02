@@ -24,13 +24,8 @@ int pick_location(SOCKET& serverSocket, std::string& location)
 	Message msg = json::parse(reply).get<Message>();
 	std::set<std::string> locations;
 	json::parse(msg.content).get_to(locations);
-	// Check number of locations received
-	auto n = locations.size();
-	if (n == 0) {
-		std::cout << "No locations available.\n";
-		return 0;
-	}
 	// Pick location
+	auto n = locations.size();
 	int option = 0;
 	do {
 		int i = 0;
@@ -62,13 +57,8 @@ int pick_genre(SOCKET& serverSocket, std::string& location, std::string& genre)
 	Message msg = json::parse(reply).get<Message>();
 	std::set<std::string> genres;
 	json::parse(msg.content).get_to(genres);
-	// Check number of genres
-	auto n = genres.size();
-	if (n == 0) {
-		std::cout << "No genres available.\n";
-		return 0;
-	}
 	// Pick genre
+	auto n = genres.size();
 	int option = 0;
 	do {
 		int i = 0;
@@ -85,7 +75,7 @@ int pick_genre(SOCKET& serverSocket, std::string& location, std::string& genre)
 	return 0;
 }
 
-std::pair<int, int> pick_show(SOCKET& serverSocket)
+auto& pick_show(SOCKET& serverSocket)
 {
 	std::pair<int, int> show_info(-1, -1);
 	// Check no of shows
@@ -130,7 +120,7 @@ std::pair<int, int> pick_show(SOCKET& serverSocket)
 	return show_info;
 }
 
-int buyTickets(SOCKET& serverSocket)
+int buy_tickets(SOCKET& serverSocket)
 {
 	// Pick location
 	std::string location;
@@ -153,7 +143,7 @@ int buyTickets(SOCKET& serverSocket)
 	Message msg = json::parse(reply).get<Message>();
 	json::parse(msg.content).get_to(shows);
 	// Pick show
-	auto p = pick_show(serverSocket);
+	auto& p = pick_show(serverSocket);
 	if (p.first == -1 || p.second == -1)
 	{
 		std::cout << "Error occurred during show pick.\n";
@@ -163,7 +153,9 @@ int buyTickets(SOCKET& serverSocket)
 	json k = Message(CODE::BUY_TICKETS, json{ {"id", p.first},
 			{"no_tickets", p.second} }.dump());
 	s = k.dump();
-	return send(serverSocket, s.data(), (int)s.length() + 1, 0);
+	ret_val = send(serverSocket, s.data(), (int)s.length() + 1, 0);
+	if (ret_val <= 0) return SOCKET_ERROR;
+	return 0;
 }
 
 int main_call(SOCKET& serverSocket)
@@ -177,7 +169,7 @@ int main_call(SOCKET& serverSocket)
 		return ret_val;
 	}
 	Message msg = json::parse(reply).get<Message>();
-	std::cout << msg.content << '\n';
+	std::cout << msg.content << '\n\n';
 	// Main menu
 	while (ret_val != SOCKET_ERROR)
 	{
@@ -190,7 +182,7 @@ int main_call(SOCKET& serverSocket)
 		switch (option)
 		{
 		case 1:
-			ret_val = buyTickets(serverSocket);
+			ret_val = buy_tickets(serverSocket);
 			break;
 		case 2:
 			ret_val = quit_call(serverSocket);
@@ -217,13 +209,15 @@ int quit_call(SOCKET& serverSocket)
 		// Send request to end call
 		json j = Message(CODE::QUIT, "QUIT");
 		std::string s = j.dump();
-		send(serverSocket, s.data(), (int)s.length() + 1, 0);
-		// Receive responde to end call
+		int ret_val = send(serverSocket, s.data(), (int)s.length() + 1, 0);
+		if (ret_val <= 0) return SOCKET_ERROR;
+		// Receive response to end call
 		char reply[2000];
-		recv(serverSocket, reply, 2000, 0);
+		ret_val = recv(serverSocket, reply, 2000, 0);
+		if (ret_val <= 0) return SOCKET_ERROR;
 		Message msg = json::parse(reply).get<Message>();
 		std::cout << msg.content << '\n';
-		exit(1);
+		return -1;
 	}
 	return 0;
 }
