@@ -3,6 +3,29 @@
 std::list<Theater> theaters;
 std::map<std::string, Client> clients;
 std::mutex tickets_mutex;
+std::mutex log_mutex;
+thread_local std::string ip_addr;
+
+void log_message(Message msg, SENDER s)
+{
+	// Lock access to logs
+	std::lock_guard<std::mutex> guard(log_mutex);
+	// Log message
+	Log log(msg, s, ip_addr);
+	const std::string path = log_path(log);
+	// Check if file exists
+	// If so, append rather than write
+	if (std::filesystem::exists(path))
+	{
+		std::ofstream ofs{ path, std::ios_base::app };
+		ofs << log;
+	}
+	else
+	{
+		std::ofstream ofs{ path };
+		ofs << log;
+	}
+}
 
 void read_theaters(const char* filename)
 {
@@ -44,9 +67,12 @@ int get_locations(SOCKET& clientSocket)
 	}
 	// Send locations to client
 	json j = locations;
-	json k = Message(CODE::GET_LOCATIONS, j.dump());
+	Message msg(CODE::GET_LOCATIONS, j.dump());
+	json k = msg;
 	auto s = k.dump();
-	return send(clientSocket, s.data(), (int)s.length() + 1, 0);
+	int ret_val = send(clientSocket, s.data(), (int)s.length() + 1, 0);
+	log_message(msg, SENDER::SERVER); // log message
+	return ret_val;
 }
 
 int get_genres(SOCKET& clientSocket, Message& msg)
@@ -65,12 +91,15 @@ int get_genres(SOCKET& clientSocket, Message& msg)
 	}
 	// Send genres to client
 	json j = genres;
-	json k = Message(CODE::GET_GENRES, j.dump());
+	msg = Message(CODE::GET_GENRES, j.dump());
+	json k = msg;
 	auto s = k.dump();
-	return send(clientSocket, s.data(), (int)s.length() + 1, 0);
+	int ret_val = send(clientSocket, s.data(), (int)s.length() + 1, 0);
+	log_message(msg, SENDER::SERVER); // log message
+	return ret_val;
 }
 
-int get_shows(SOCKET& clientSocket, Message& msg, const std::string& ip_addr, theater_it& it)
+int get_shows(SOCKET& clientSocket, Message& msg, theater_it& it)
 {
 	// Parse message content for location and genre
 	json j = json::parse(msg.content);
@@ -90,9 +119,11 @@ int get_shows(SOCKET& clientSocket, Message& msg, const std::string& ip_addr, th
 		};
 		auto no_shows = std::count_if((*it).shows.begin(), (*it).shows.end(), not_rec);
 		// Send no of shows to client
-		json j = Message(CODE::GET_SHOWS, std::to_string(no_shows));
+		Message msg(CODE::GET_SHOWS, std::to_string(no_shows));
+		json j = msg;
 		auto s = j.dump();
 		int ret_val = send(clientSocket, s.data(), (int)s.length() + 1, 0);
+		log_message(msg, SENDER::SERVER); // log message
 		if (ret_val <= 0) return SOCKET_ERROR;
 		// Send show info in JSON format
 		for (auto& show : (*it).shows)
@@ -100,9 +131,11 @@ int get_shows(SOCKET& clientSocket, Message& msg, const std::string& ip_addr, th
 			if (not_rec(show))
 			{
 				json j = show;
-				json k = Message(CODE::GET_SHOWS, j.dump());
+				Message msg(CODE::GET_SHOWS, j.dump());
+				json k = msg;
 				s = k.dump();
 				int ret_val = send(clientSocket, s.data(), (int)s.length() + 1, 0);
+				log_message(msg, SENDER::SERVER); // log message
 				if (ret_val <= 0) return SOCKET_ERROR;
 				// Add show to client's recommended
 				clients[ip_addr].showsRec.push_back(show.id);
@@ -112,12 +145,13 @@ int get_shows(SOCKET& clientSocket, Message& msg, const std::string& ip_addr, th
 	return 0;
 }
 
-int buy_tickets(SOCKET& clientSocket, Message& msg, const std::string& ip_addr)
+int buy_tickets(SOCKET& clientSocket, Message& msg)
 {
-	// Send available shows to client
+	// Lock access to shows
 	std::lock_guard<std::mutex> guard(tickets_mutex);
+	// Send available shows to client
 	theater_it it;
-	int ret_val = get_shows(clientSocket, msg, ip_addr, it);
+	int ret_val = get_shows(clientSocket, msg, it);
 	if (ret_val < 0) return SOCKET_ERROR;
 	// Get ticket info from client
 	char reply[2000];
@@ -125,6 +159,7 @@ int buy_tickets(SOCKET& clientSocket, Message& msg, const std::string& ip_addr)
 	if (ret_val <= 0) return SOCKET_ERROR;
 	// Parse ticket info
 	msg = json::parse(reply).get<Message>();
+	log_message(msg, SENDER::CLIENT); // log message
 	json j = json::parse(msg.content);
 	int id, no_tickets;
 	j.at("id").get_to(id);
@@ -145,16 +180,17 @@ int main_call(SOCKET clientSocket, SOCKADDR_IN client_addr)
 {
 	// Get client's IP address
 	char buf[20];
-	inet_ntop(client_addr.sin_family, &client_addr.sin_addr, buf, 20);
-	const std::string ip_addr(buf);
+	ip_addr = inet_ntop(client_addr.sin_family, &client_addr.sin_addr, buf, 20);
 	if (!clients.contains(ip_addr))
 	{
 		clients.insert(std::make_pair(ip_addr, Client(ip_addr)));
 	}
 	// Send HELLO message
-	json j = Message(CODE::HELLO, "100 OK");
+	Message msg(CODE::HELLO, "100 OK");
+	json j = msg;
 	auto s = j.dump();
 	int ret_val = send(clientSocket, s.data(), (int)s.length() + 1, 0);
+	log_message(msg, SENDER::SERVER); // log message
 	while (ret_val > 0)
 	{
 		// Receive next message and parse it
@@ -162,6 +198,7 @@ int main_call(SOCKET clientSocket, SOCKADDR_IN client_addr)
 		ret_val = recv(clientSocket, reply, 2000, 0);
 		if (ret_val <= 0) break;
 		Message msg = json::parse(reply).get<Message>();
+		log_message(msg, SENDER::CLIENT); // log message
 		// Call proper function, according to message code
 		switch (msg.code)
 		{
@@ -172,7 +209,7 @@ int main_call(SOCKET clientSocket, SOCKADDR_IN client_addr)
 			ret_val = get_genres(clientSocket, msg);
 			break;
 		case CODE::GET_SHOWS:
-			ret_val = buy_tickets(clientSocket, msg, ip_addr);
+			ret_val = buy_tickets(clientSocket, msg);
 			break;
 		case CODE::QUIT:
 			ret_val = quit_call(clientSocket);
@@ -190,9 +227,11 @@ int main_call(SOCKET clientSocket, SOCKADDR_IN client_addr)
 int quit_call(SOCKET& clientSocket)
 {
 	// Send 400 BYE message to client
-	json j = Message(CODE::QUIT, "400 BYE");
+	Message msg(CODE::QUIT, "400 BYE");
+	json j = msg;
 	auto s = j.dump();
 	send(clientSocket, s.data(), (int)s.length() + 1, 0);
+	log_message(msg, SENDER::SERVER); // log message
 	std::cout << "Bye, client...\n\n";
 	return 0;
 }

@@ -1,21 +1,29 @@
 #pragma once
-#include <sstream>
 #include <set>
 #include <mutex>
+#include <filesystem>
 #include <WinSock2.h>
 #include <WS2tcpip.h>
 #include "Theater.h"
 #include "Client.h"
-#include "Message.h"
+#include "Log.h"
 
 #pragma comment(lib, "ws2_32.lib")
 
 extern std::list<Theater> theaters;
 extern std::map<std::string, Client> clients;
 extern std::mutex tickets_mutex;
+extern std::mutex log_mutex;
+extern thread_local std::string ip_addr;
 
 using theater_it = std::list<Theater>::iterator;
 
+/**
+ * @brief Logs message
+ * @param msg: message send/received
+ * @param sender: CLIENT or SERVER
+*/
+void log_message(Message msg, SENDER sender);
 /**
  * @brief Reads theaters from file
  * @param filename: path to JSON file
@@ -53,19 +61,17 @@ int get_genres(SOCKET& clientSocket, Message& msg);
  * @brief Sends available shows to client, given location and genre
  * @param clientSocket: client socket
  * @param msg: last message received
- * @param ip_addr: client's IP address
  * @param it: iterator pointing to chosen theater
  * @return integer: value of send
 */
-int get_shows(SOCKET& clientSocket, Message& msg, const std::string& ip_addr, theater_it& it);
+int get_shows(SOCKET& clientSocket, Message& msg, theater_it& it);
 /**
  * @brief Processes client's ticket purchase
  * @param clientSocket: client socket
  * @param msg: last message received
- * @param ip_addr: client's IP address
  * @return 
 */
-int buy_tickets(SOCKET& clientSocket, Message& msg, const std::string& ip_addr);
+int buy_tickets(SOCKET& clientSocket, Message& msg);
 /**
 * @brief Main client call function
 * @param clientSocket: client socket

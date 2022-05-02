@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <ctime>
 #include "json.hpp"
 
 using json = nlohmann::json;
@@ -30,11 +31,15 @@ const enum struct CODE : int {
 	QUIT
 };
 
+extern const std::map<CODE, const char*> codename;
+
 class Message
 {
 public:
+	static constexpr char fmt_str[] = "%F %T";
 	CODE code;
 	std::string content;
+	tm stamp;
 	Message();
 	Message(CODE code, std::string content);
 	virtual ~Message();

@@ -2,8 +2,6 @@
 
 Show::Show()
 {
-	capacity = 0;
-	available_seats = 0;
 }
 
 Show::~Show()
@@ -34,12 +32,10 @@ void to_json(json& j, const Show& s)
 
 void from_json(const json& j, Show& s)
 {
-	std::string aux;
 	j.at("id").get_to(s.id);
 	j.at("name").get_to(s.name);
 	j.at("genre").get_to(s.genre);
-	j.at("datetime").get_to(aux);
-	std::istringstream ss{ aux };
+	std::istringstream ss{ j.at("datetime").get<std::string>() };
 	ss >> std::get_time(&s.datetime, Show::fmt_str);
 	j.at("capacity").get_to(s.capacity);
 	j.at("available_seats").get_to(s.available_seats);
