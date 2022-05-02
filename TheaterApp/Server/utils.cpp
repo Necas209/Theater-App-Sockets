@@ -113,36 +113,29 @@ int get_shows(SOCKET& clientSocket, Message& msg, theater_it& it)
 		[&](Theater& t) { return t.location == location; });
 	if (it != theaters.end())
 	{
-		// Count no of shows not yet recommended to client
+		// Send shows to client
+		std::list<Show> shows;
 		auto not_rec = [&](Show& show) {
 			return show.available_seats > 0
 				&& show.genre == genre
 				&& !clients[ip_addr].been_recommended(show.id);
 		};
-		auto no_shows = std::count_if((*it).shows.begin(), (*it).shows.end(), not_rec);
-		// Send no of shows to client
-		Message msg(CODE::GET_SHOWS, std::to_string(no_shows));
-		json j = msg;
-		auto s = j.dump();
-		int ret_val = send(clientSocket, s.data(), (int)s.length() + 1, 0);
-		log_message(msg, SENDER::SERVER); // log message
-		if (ret_val <= 0) return SOCKET_ERROR;
-		// Send show info in JSON format
 		for (auto& show : (*it).shows)
 		{
 			if (not_rec(show))
 			{
-				json j = show;
-				Message msg(CODE::GET_SHOWS, j.dump());
-				json k = msg;
-				s = k.dump();
-				int ret_val = send(clientSocket, s.data(), (int)s.length() + 1, 0);
-				log_message(msg, SENDER::SERVER); // log message
-				if (ret_val <= 0) return SOCKET_ERROR;
+				shows.push_back(show);
 				// Add show to client's recommended
 				clients[ip_addr].showsRec.push_back(show.id);
 			}
 		}
+		json j = shows;
+		Message msg(CODE::GET_SHOWS, j.dump());
+		json k = msg;
+		auto s = k.dump();
+		int ret_val = send(clientSocket, s.data(), (int)s.length() + 1, 0);
+		log_message(msg, SENDER::SERVER); // log message
+		if (ret_val <= 0) return SOCKET_ERROR;
 	}
 	return 0;
 }
@@ -182,7 +175,8 @@ int main_call(SOCKET clientSocket, SOCKADDR_IN client_addr)
 {
 	// Get client's IP address
 	char buf[20];
-	ip_addr = inet_ntop(client_addr.sin_family, &client_addr.sin_addr, buf, 20);
+	inet_ntop(client_addr.sin_family, &client_addr.sin_addr, buf, 20);
+	ip_addr = std::string(buf);
 	if (!clients.contains(ip_addr))
 	{
 		clients.insert(std::make_pair(ip_addr, Client(ip_addr)));
@@ -200,19 +194,19 @@ int main_call(SOCKET clientSocket, SOCKADDR_IN client_addr)
 		char reply[2000];
 		ret_val = recv(clientSocket, reply, 2000, 0);
 		if (ret_val <= 0) break;
-		Message msg = json::parse(reply).get<Message>();
-		log_message(msg, SENDER::CLIENT); // log message
+		Message message = json::parse(reply).get<Message>();
+		log_message(message, SENDER::CLIENT); // log message
 		// Call proper function, according to message code
-		switch (msg.code)
+		switch (message.code)
 		{
 		case CODE::GET_LOCATIONS:
 			ret_val = get_locations(clientSocket);
 			break;
 		case CODE::GET_GENRES:
-			ret_val = get_genres(clientSocket, msg);
+			ret_val = get_genres(clientSocket, message);
 			break;
 		case CODE::GET_SHOWS:
-			ret_val = buy_tickets(clientSocket, msg);
+			ret_val = buy_tickets(clientSocket, message);
 			break;
 		case CODE::QUIT:
 			ret_val = quit_call(clientSocket);

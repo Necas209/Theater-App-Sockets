@@ -146,20 +146,12 @@ int buyTickets(SOCKET& serverSocket)
 	auto s = j.dump();
 	ret_val = send(serverSocket, s.data(), (int)s.length() + 1, 0);
 	if (ret_val <= 0) return SOCKET_ERROR;
-	// Parse response
+	// Parse response and get shows
 	char reply[2000];
 	ret_val = recv(serverSocket, reply, 2000, 0);
 	if (ret_val <= 0) return SOCKET_ERROR;
 	Message msg = json::parse(reply).get<Message>();
-	int no_shows = std::stoi(msg.content);
-	// Get shows
-	for (int i = 0; i < no_shows; i++)
-	{
-		ret_val = recv(serverSocket, reply, 2000, 0);
-		if (ret_val <= 0) return SOCKET_ERROR;
-		Message msg = json::parse(reply).get<Message>();
-		shows.push_back(json::parse(msg.content).get<Show>());
-	}
+	json::parse(msg.content).get_to(shows);
 	// Pick show
 	auto p = pick_show(serverSocket);
 	if (p.first == -1 || p.second == -1)

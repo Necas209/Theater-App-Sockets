@@ -2,7 +2,7 @@
 #include <thread>
 
 constexpr auto DS_TEST_PORT = (USHORT)68000;
-constexpr auto MAX_THREADS = 2;
+constexpr auto MAX_THREADS = 50;
 
 int main(int argc, char* argv[])
 {
@@ -37,10 +37,11 @@ int main(int argc, char* argv[])
 	listen(listening, SOMAXCONN);
 	// Wait for connection
 	SOCKADDR_IN client_addr{};
+	int clientSize = sizeof(client_addr);
 	SOCKET clientSocket;
 	std::list<std::thread> threads;
 	int i = 0;
-	while (i++ < MAX_THREADS && (clientSocket = accept(listening, (SOCKADDR*)&client_addr, NULL)) != SOCKET_ERROR)
+	while (i++ < MAX_THREADS && (clientSocket = accept(listening, (SOCKADDR*)&client_addr, &clientSize)) != SOCKET_ERROR)
 	{
 		threads.emplace_back(main_call, clientSocket, client_addr);
 	}

@@ -12,7 +12,7 @@
                 "name": "Tragedy of Othello: The Moor of Venice"
             },
             {
-                "available_seats": 30,
+                "available_seats": 26,
                 "capacity": 80,
                 "datetime": "Sun Aug 08 12:30:00 2022",
                 "genre": "Comedy",
@@ -20,7 +20,7 @@
                 "name": "The Tempest"
             },
             {
-                "available_seats": 26,
+                "available_seats": 24,
                 "capacity": 80,
                 "datetime": "Sun Aug 08 12:30:00 2023",
                 "genre": "Tragedy",
