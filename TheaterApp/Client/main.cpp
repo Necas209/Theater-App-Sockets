@@ -32,7 +32,7 @@ int main(int argc, char* argv[])
 	getline(std::cin, ip_addr);
 	if (!validate_ip(ip_addr))
 	{
-		ip_addr = "25.63.23.179";
+		ip_addr = "172.30.217.49";
 		std::cout << "Invalid IP address.\n";
 		std::cout << "IP address will default to " << ip_addr << ".\n";
 	}

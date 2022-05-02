@@ -2,16 +2,16 @@
 #include <thread>
 
 constexpr auto DS_TEST_PORT = (USHORT)68000;
-constexpr auto MAX_THREADS = 5;
+constexpr auto MAX_THREADS = 2;
 
 int main(int argc, char* argv[])
 {
+	//
 	SetConsoleOutputCP(CP_UTF8);
 	// Initialise winsock
 	WSADATA wsData;
-	WORD ver = MAKEWORD(2, 2);
 	std::cout << "Initialising Winsock...\n";
-	int wsResult = WSAStartup(ver, &wsData);
+	int wsResult = WSAStartup(MAKEWORD(2, 2), &wsData);
 	if (wsResult != 0)
 	{
 		std::cerr << "\nWinsock setup failed! Error Code : " << WSAGetLastError() << '\n';

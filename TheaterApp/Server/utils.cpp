@@ -180,7 +180,8 @@ int main_call(SOCKET clientSocket, SOCKADDR_IN client_addr)
 {
 	// Get client's IP address
 	char buf[20];
-	ip_addr = inet_ntop(client_addr.sin_family, &client_addr.sin_addr, buf, 20);
+	inet_ntop(client_addr.sin_family, &client_addr.sin_addr, buf, 20);
+	ip_addr = buf;
 	if (!clients.contains(ip_addr))
 	{
 		clients.insert(std::make_pair(ip_addr, Client(ip_addr)));

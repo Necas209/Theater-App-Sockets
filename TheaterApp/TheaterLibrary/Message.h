@@ -36,7 +36,7 @@ extern const std::map<CODE, const char*> codename;
 class Message
 {
 public:
-	static constexpr char fmt_str[] = "%F %T";
+	static constexpr char fmt_str[] = "%Y-%m-%d %H:%M:%S";
 	CODE code;
 	std::string content;
 	tm stamp;
