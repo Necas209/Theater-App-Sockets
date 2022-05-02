@@ -6,13 +6,7 @@
     },
     "25.63.34.205": {
         "ip_addr": "25.63.34.205",
-        "showsRec": [
-            9,
-            7
-        ],
-        "showsSeen": [
-            9,
-            7
-        ]
+        "showsRec": [],
+        "showsSeen": []
     }
 }

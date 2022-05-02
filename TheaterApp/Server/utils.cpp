@@ -15,16 +15,18 @@ void log_message(Message msg, SENDER s)
 	const std::string path = log_path(log);
 	// Check if file exists
 	// If so, append rather than write
+	std::ofstream ofs;
 	if (std::filesystem::exists(path))
 	{
-		std::ofstream ofs{ path, std::ios_base::app };
+		ofs.open(path, std::ios_base::app);
 		ofs << log;
 	}
 	else
 	{
-		std::ofstream ofs{ path };
+		ofs.open(path);
 		ofs << log;
 	}
+	ofs.close();
 }
 
 void read_theaters(const char* filename)
@@ -180,8 +182,7 @@ int main_call(SOCKET clientSocket, SOCKADDR_IN client_addr)
 {
 	// Get client's IP address
 	char buf[20];
-	inet_ntop(client_addr.sin_family, &client_addr.sin_addr, buf, 20);
-	ip_addr = buf;
+	ip_addr = inet_ntop(client_addr.sin_family, &client_addr.sin_addr, buf, 20);
 	if (!clients.contains(ip_addr))
 	{
 		clients.insert(std::make_pair(ip_addr, Client(ip_addr)));
@@ -192,6 +193,7 @@ int main_call(SOCKET clientSocket, SOCKADDR_IN client_addr)
 	auto s = j.dump();
 	int ret_val = send(clientSocket, s.data(), (int)s.length() + 1, 0);
 	log_message(msg, SENDER::SERVER); // log message
+	std::cout << "Hello, client!\n\n";
 	while (ret_val > 0)
 	{
 		// Receive next message and parse it

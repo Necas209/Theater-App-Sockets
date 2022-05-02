@@ -14,8 +14,8 @@ Log::~Log()
 std::string log_path(const Log& l)
 {
 	std::ostringstream ss;
-	ss << std::put_time(&l.message.stamp, "%Y-%m-%d");
-	return "./logs/" + ss.str() + ".log";
+	ss << R"(.\theater_logs\)" << std::put_time(&l.message.stamp, "%Y-%m-%d") << ".log";
+	return ss.str();
 }
 
 std::ofstream& operator<<(std::ofstream& ofs, const Log& l)

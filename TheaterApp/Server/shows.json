@@ -64,7 +64,7 @@
         "name": "Teatro Municipal de Vila Real",
         "shows": [
             {
-                "available_seats": 20,
+                "available_seats": 26,
                 "capacity": 80,
                 "datetime": "Sun Aug 08 12:30:00 2023",
                 "genre": "Comedy",
