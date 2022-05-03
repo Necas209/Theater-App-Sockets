@@ -79,7 +79,7 @@ int get_genres(SOCKET& clientSocket, Message& msg)
 {
 	// Find theater in given location
 	auto& location = msg.content;
-	auto it = std::find_if(theaters.begin(), theaters.end(), [&](Theater& t) 
+	auto it = std::find_if(theaters.begin(), theaters.end(), [&](Theater& t)
 		{ return t.location == location; });
 	if (it == theaters.end())
 		return -1;
@@ -107,26 +107,22 @@ int get_shows(SOCKET& clientSocket, Message& msg, theater_it& it)
 	j.at("location").get_to(location);
 	j.at("genre").get_to(genre);
 	// Find theater in given location
-	it = std::find_if(theaters.begin(), theaters.end(), 
+	it = std::find_if(theaters.begin(), theaters.end(),
 		[&](Theater& t) { return t.location == location; });
 	if (it != theaters.end())
 	{
-		// Send shows to client
+		// Filter shows
 		std::list<Show> shows;
-		auto not_rec = [&](Show& show) {
-			return show.available_seats > 0
-				&& show.genre == genre
-				&& !clients[ip_addr].been_recommended(show.id);
-		};
-		for (auto& show : (*it).shows)
-		{
-			if (not_rec(show))
-			{
-				shows.push_back(show);
-				// Add show to client's recommended
-				clients[ip_addr].showsRec.push_back(show.id);
-			}
-		}
+		std::copy_if((*it).shows.begin(), (*it).shows.end(), std::back_inserter(shows),
+			[&](Show& s) {
+				return s.available_seats > 0
+					&& s.genre == genre
+					&& !clients[ip_addr].been_recommended(s.id);
+			});
+		// Add to recommended
+		std::for_each(shows.begin(), shows.end(), 
+			[&](Show& s) { clients[ip_addr].showsRec.push_back(s.id); });
+		// Send shows to client
 		json j = shows;
 		Message msg(CODE::GET_SHOWS, j.dump());
 		json k = msg;

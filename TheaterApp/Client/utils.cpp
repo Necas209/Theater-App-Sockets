@@ -28,13 +28,10 @@ int pick_location(SOCKET& serverSocket, std::string& location)
 	auto n = locations.size();
 	int option = 0;
 	do {
-		int i = 0;
 		std::cout << "Available locations:\n";
-		for (const auto& location : locations)
-		{
-			std::cout << '\t' << i << " -> " << location << '\n';
-			++i;
-		}
+		int i = 0;
+		std::for_each(locations.begin(), locations.end(),
+			[&](const auto& l) { std::cout << '\t' << i << " -> " << l << '\n'; i++; });
 		std::cout << "Option: ";
 		(std::cin >> option).ignore();
 	} while (option < 0 || option >= n);
@@ -61,13 +58,10 @@ int pick_genre(SOCKET& serverSocket, std::string& location, std::string& genre)
 	auto n = genres.size();
 	int option = 0;
 	do {
-		int i = 0;
 		std::cout << "Available genres:\n";
-		for (const auto& genre : genres)
-		{
-			std::cout << '\t' << i << " -> " << genre << '\n';
-			++i;
-		}
+		int i = 0;
+		std::for_each(genres.begin(), genres.end(),
+			[&](const auto& g) { std::cout << '\t' << i << " -> " << g << '\n'; i++; });
 		std::cout << "Option: ";
 		(std::cin >> option).ignore();
 	} while (option < 0 || option >= n);
@@ -86,11 +80,7 @@ auto& pick_show(SOCKET& serverSocket)
 	}
 	// Pick show from available shows
 	std::cout << "Available shows: \n";
-	for (auto& show : shows)
-	{
-		show.write();
-		std::cout << '\n';
-	}
+	std::for_each(shows.begin(), shows.end(), [](Show& s) { s.write(); std::cout << '\n'; });
 	int id;
 	std::cout << "Choose show (id): ";
 	(std::cin >> id).ignore();
