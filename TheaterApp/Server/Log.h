@@ -2,23 +2,22 @@
 #include <fstream>
 #include "Message.h"
 
-const enum struct SENDER : int {
+enum struct SENDER {
 	CLIENT,
 	SERVER
 };
 
 
-class Log
+class Log final
 {
-private:
+public:
 	// attributes
 	Message message;
 	SENDER sender;
 	std::string ip_addr;
-public:
 	// methods
-	Log(Message msg, SENDER s, std::string ip);
-	virtual ~Log();
+	Log(const Message& msg, SENDER s, const std::string& ip);
+	~Log();
 	friend std::string log_path(const Log& l);
 	friend std::ofstream& operator<<(std::ofstream& ofs, const Log& l);
 };

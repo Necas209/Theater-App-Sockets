@@ -1,18 +1,17 @@
 #include "utils.h"
 #include <thread>
 
-constexpr auto DS_TEST_PORT = (USHORT)68000;
-constexpr auto MAX_THREADS = 5;
+constexpr auto ds_test_port = static_cast<u_short>(68000);
+constexpr auto max_threads = 5;
 
-int main(int argc, char* argv[])
+int main()
 {
 	//
 	SetConsoleOutputCP(CP_UTF8);
 	// Initialise winsock
-	WSADATA wsData;
+	WSADATA ws_data;
 	std::cout << "Initialising Winsock...\n";
-	int wsResult = WSAStartup(MAKEWORD(2, 2), &wsData);
-	if (wsResult != 0)
+	if (WSAStartup(MAKEWORD(2, 2), &ws_data) != 0)
 	{
 		std::cerr << "\nWinsock setup failed! Error Code : " << WSAGetLastError() << '\n';
 		return 1;
@@ -20,7 +19,7 @@ int main(int argc, char* argv[])
 	read_theaters();
 	read_clients();
 	// Create a socket
-	SOCKET listening = socket(AF_INET, SOCK_STREAM, 0);
+	const SOCKET listening = socket(AF_INET, SOCK_STREAM, 0);
 	if (listening == INVALID_SOCKET)
 	{
 		std::cerr << "\nSocket creation failed! Error Code : " << WSAGetLastError() << '\n';
@@ -30,20 +29,24 @@ int main(int argc, char* argv[])
 	// Bind the socket (ip address and port)
 	SOCKADDR_IN hint{};
 	hint.sin_family = AF_INET;
-	hint.sin_port = htons(DS_TEST_PORT);
+	hint.sin_port = htons(ds_test_port);
 	hint.sin_addr.S_un.S_addr = INADDR_ANY;
-	bind(listening, (SOCKADDR*)&hint, sizeof(hint));
+	if (bind(listening, reinterpret_cast<SOCKADDR*>(&hint), sizeof(hint)) == SOCKET_ERROR)
+	{
+		std::cerr << "\nAddress binding failed! Error Code : " << WSAGetLastError() << '\n';
+		return 1;
+	}
 	// Setup the socket for listening
 	listen(listening, SOMAXCONN);
 	// Wait for connection
 	SOCKADDR_IN client_addr{};
-	int clientSize = sizeof(client_addr);
-	SOCKET clientSocket;
+	int client_size = sizeof(client_addr);
+	SOCKET client_socket;
 	std::list<std::thread> threads;
 	int i = 0;
-	while (i++ < MAX_THREADS && (clientSocket = accept(listening, (SOCKADDR*)&client_addr, &clientSize)) != SOCKET_ERROR)
+	while (i++ < max_threads && (client_socket = accept(listening, reinterpret_cast<SOCKADDR*>(&client_addr), &client_size)) != INVALID_SOCKET)
 	{
-		threads.emplace_back(main_call, clientSocket, client_addr);
+		threads.emplace_back(main_call, client_socket, client_addr);
 	}
 	closesocket(listening);
 	for (auto& thread : threads)

@@ -1,24 +1,24 @@
 {
     "172.30.122.229": {
         "ip_addr": "172.30.122.229",
-        "showsRec": [
+        "shows_rec": [
             6,
             1,
             5
         ],
-        "showsSeen": [
+        "shows_seen": [
             6,
             5
         ]
     },
     "172.30.209.237": {
         "ip_addr": "172.30.209.237",
-        "showsRec": [
+        "shows_rec": [
             6,
             1,
             5
         ],
-        "showsSeen": [
+        "shows_seen": [
             6,
             5
         ]

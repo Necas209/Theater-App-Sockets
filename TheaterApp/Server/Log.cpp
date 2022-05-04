@@ -1,6 +1,6 @@
 #include "Log.h"
 
-Log::Log(Message msg, SENDER s, std::string ip)
+Log::Log(const Message& msg, const SENDER s, const std::string& ip)
 {
 	message = msg;
 	sender = s;
@@ -8,17 +8,16 @@ Log::Log(Message msg, SENDER s, std::string ip)
 }
 
 Log::~Log()
-{
-}
+= default;
 
-std::string log_path(const Log& l)
+std::string log_path(const Log & l)
 {
 	std::ostringstream ss;
 	ss << R"(.\theater_logs\)" << std::put_time(&l.message.stamp, "%Y-%m-%d") << ".log";
 	return ss.str();
 }
 
-std::ofstream& operator<<(std::ofstream& ofs, const Log& l)
+std::ofstream& operator<<(std::ofstream & ofs, const Log & l)
 {
 	ofs << std::put_time(&l.message.stamp, Message::fmt_str) << ',';
 	switch (l.sender)

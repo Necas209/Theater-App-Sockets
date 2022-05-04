@@ -2,7 +2,7 @@
 #include <list>
 #include "Show.h"
 
-class Theater
+class Theater final
 {
 public:
 	// attributes
@@ -11,7 +11,7 @@ public:
 	std::list<Show> shows;
 	// methods
 	Theater();
-	virtual ~Theater();
+	~Theater();
 	// serializer and deserializer
 	friend void to_json(json& j, const Theater& t);
 	friend void from_json(const json& j, Theater& t);

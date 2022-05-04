@@ -1,14 +1,12 @@
 #include "Show.h"
 
 Show::Show()
-{
-}
+= default;
 
 Show::~Show()
-{
-}
+= default;
 
-void Show::write()
+void Show::write() const
 {
 	std::cout << '(' << id << ") -> ";
 	std::cout << name << " | " << genre << " | ";
@@ -17,7 +15,7 @@ void Show::write()
 	std::cout << "Available seats: " << available_seats << '\n';
 }
 
-void to_json(json& j, const Show& s)
+void to_json(json & j, const Show & s)
 {
 	std::ostringstream ss;
 	ss << std::put_time(&s.datetime, Show::fmt_str);
@@ -30,7 +28,7 @@ void to_json(json& j, const Show& s)
 	};
 }
 
-void from_json(const json& j, Show& s)
+void from_json(const json & j, Show & s)
 {
 	j.at("id").get_to(s.id);
 	j.at("name").get_to(s.name);

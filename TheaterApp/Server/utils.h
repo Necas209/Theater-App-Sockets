@@ -16,14 +16,12 @@ extern std::mutex tickets_mutex;
 extern std::mutex log_mutex;
 extern thread_local std::string ip_addr;
 
-using theater_it = std::list<Theater>::iterator;
-
 /**
  * @brief Logs message
  * @param msg: message send/received
  * @param sender: CLIENT or SERVER
 */
-void log_message(Message msg, SENDER sender);
+void log_message(const Message& msg, SENDER sender);
 /**
  * @brief Reads theaters from file
  * @param filename: path to JSON file
@@ -46,42 +44,42 @@ void read_clients(const char* filename = "clients.json");
 void write_clients(const char* filename = "clients.json");
 /**
  * @brief Sends available locations to client
- * @param clientSocket: client socket
+ * @param client_socket: client socket
  * @return integer: value of send
 */
-int get_locations(SOCKET& clientSocket);
+int get_locations(const SOCKET& client_socket);
 /**
  * @brief Sends available genres to client
- * @param clientSocket: client socket
+ * @param client_socket: client socket
  * @param msg: last message received
  * @return integer: value of send
 */
-int get_genres(SOCKET& clientSocket, Message& msg);
+int get_genres(const SOCKET& client_socket, Message& msg);
 /**
  * @brief Sends available shows to client, given location and genre
- * @param clientSocket: client socket
+ * @param client_socket: client socket
  * @param msg: last message received
  * @param it: iterator pointing to chosen theater
  * @return integer: value of send
 */
-int get_shows(SOCKET& clientSocket, Message& msg, theater_it& it);
+int get_shows(const SOCKET& client_socket, Message& msg, std::list<Theater>::iterator& it);
 /**
  * @brief Processes client's ticket purchase
- * @param clientSocket: client socket
+ * @param client_socket: client socket
  * @param msg: last message received
- * @return 
+ * @return
 */
-int buy_tickets(SOCKET& clientSocket, Message& msg);
+int buy_tickets(const SOCKET& client_socket, Message& msg);
 /**
 * @brief Main client call function
-* @param clientSocket: client socket
+* @param client_socket: client socket
 * @param client_addr: socket address
 * @return integer: the call state
 */
-int main_call(SOCKET clientSocket, SOCKADDR_IN client_addr);
+int main_call(SOCKET client_socket, SOCKADDR_IN client_addr);
 /**
  * @brief Quits call with client
- * @param clientSocket: client socket
+ * @param client_socket: client socket
  * @return integer: send return value
 */
-int quit_call(SOCKET& clientSocket);
+int quit_call(const SOCKET& client_socket);

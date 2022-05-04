@@ -5,7 +5,7 @@
 
 using json = nlohmann::json;
 
-const enum struct CODE : int {
+enum struct CODE {
 	HELLO,
 	GET_LOCATIONS,
 	GET_GENRES,
@@ -31,16 +31,16 @@ extern const std::map<CODE, const char*> codename;
 *	"content": "", // or [ "Vila Real", "Fafe" ]
 * }
 */
-class Message
+class Message final
 {
 public:
 	static constexpr char fmt_str[] = "%Y-%m-%d %H:%M:%S";
-	CODE code;
+	CODE code{};
 	std::string content;
-	tm stamp;
+	tm stamp{};
 	Message();
-	Message(CODE code, std::string content);
-	virtual ~Message();
+	Message(CODE code, const std::string& content);
+	~Message();
 	friend void to_json(json& j, const Message& m);
 	friend void from_json(const json& j, Message& m);
 };
