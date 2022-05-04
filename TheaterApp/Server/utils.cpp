@@ -153,7 +153,7 @@ int buy_tickets(const SOCKET& client_socket, Message& msg)
 	return ret_val;
 }
 
-int main_call(const SOCKET client_socket, const SOCKADDR_IN client_addr)
+int main_call(const SOCKET client_socket, const sockaddr_in client_addr)
 {
 	// Get client's IP address
 	char buf[20];

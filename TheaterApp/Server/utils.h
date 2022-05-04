@@ -76,7 +76,7 @@ int buy_tickets(const SOCKET& client_socket, Message& msg);
 * @param client_addr: socket address
 * @return integer: the call state
 */
-int main_call(SOCKET client_socket, SOCKADDR_IN client_addr);
+int main_call(SOCKET client_socket, sockaddr_in client_addr);
 /**
  * @brief Quits call with client
  * @param client_socket: client socket

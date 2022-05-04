@@ -6,7 +6,6 @@ constexpr auto ds_test_port = static_cast<u_short>(68000);
 int main()
 {
 	WSADATA wsa;
-	SOCKADDR_IN server_addr{};
 	SetConsoleCP(CP_UTF8);
 	// Initialise winsock
 	std::cout << "\nInitialising Winsock...";
@@ -35,11 +34,12 @@ int main()
 		std::cout << "IP address will default to " << ip_addr << ".\n";
 	}
 	// create the socket address (IP address and port)
+	sockaddr_in server_addr{};
 	server_addr.sin_family = AF_INET;
-	inet_pton(server_addr.sin_family, ip_addr.data(), &server_addr.sin_addr.s_addr);
 	server_addr.sin_port = htons(ds_test_port);
+	inet_pton(server_addr.sin_family, ip_addr.data(), &server_addr.sin_addr.s_addr);
 	// Connect to remote server
-	if (connect(server_socket, reinterpret_cast<SOCKADDR*>(&server_addr), sizeof(server_addr)) == SOCKET_ERROR)
+	if (connect(server_socket, reinterpret_cast<sockaddr*>(&server_addr), sizeof(server_addr)) == SOCKET_ERROR)
 	{
 		std::cout << "Connection error\n";
 		return 1;
