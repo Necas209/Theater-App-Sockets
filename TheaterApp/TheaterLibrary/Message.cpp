@@ -1,19 +1,19 @@
-#include "Message.h"
+#include "message.h"
 
-const std::map<CODE, const char*> codename
+const std::map<code, const char*> codename
 {
-	{CODE::HELLO, "HELLO"},
-	{CODE::GET_LOCATIONS, "GET_LOCATIONS"},
-	{CODE::GET_GENRES, "GET_GENRES"},
-	{CODE::GET_SHOWS, "GET_SHOWS"},
-	{CODE::BUY_TICKETS, "BUY_TICKETS"},
-	{CODE::QUIT, "QUIT"}
+	{code::hello, "HELLO"},
+	{code::get_locations, "GET_LOCATIONS"},
+	{code::get_genres, "GET_GENRES"},
+	{code::get_shows, "GET_SHOWS"},
+	{code::buy_tickets, "BUY_TICKETS"},
+	{code::quit, "QUIT"}
 };
 
-Message::Message()
+message::message()
 = default;
 
-Message::Message(const CODE code, const std::string& content)
+message::message(const enum code code, const std::string& content)
 {
 	this->code = code;
 	this->content = content;
@@ -21,22 +21,19 @@ Message::Message(const CODE code, const std::string& content)
 	localtime_s(&stamp, &t);
 }
 
-Message::~Message()
-= default;
-
-void to_json(json & j, const Message & m)
+void to_json(json & j, const message & m)
 {
 	std::ostringstream ss;
-	ss << std::put_time(&m.stamp, Message::fmt_str);
+	ss << std::put_time(&m.stamp, message::fmt_str);
 	j = json{ {"code", m.code},
 		{"content", m.content},
 		{"stamp", ss.str()} };
 }
 
-void from_json(const json & j, Message & m)
+void from_json(const json & j, message & m)
 {
 	j.at("code").get_to(m.code);
 	j.at("content").get_to(m.content);
 	std::istringstream ss{ j.at("stamp").get<std::string>() };
-	ss >> std::get_time(&m.stamp, Message::fmt_str);
+	ss >> std::get_time(&m.stamp, message::fmt_str);
 }

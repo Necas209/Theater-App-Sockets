@@ -10,7 +10,7 @@ int main()
 	SetConsoleOutputCP(CP_UTF8);
 	// Initialise winsock
 	WSADATA ws_data;
-	std::cout << "Initialising Winsock...\n";
+	std::cout << "Initializing Winsock...\n";
 	if (WSAStartup(MAKEWORD(2, 2), &ws_data) != 0)
 	{
 		std::cerr << "\nWinsock setup failed! Error Code : " << WSAGetLastError() << '\n';

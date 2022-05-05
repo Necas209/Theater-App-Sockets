@@ -4,7 +4,7 @@
 
 using json = nlohmann::json;
 
-class Show final
+class show final
 {
 	// Example: "Sun Aug 08 12:30:00 2023"
 	static constexpr char fmt_str[] = "%a %b %d %H:%M:%S %Y";
@@ -17,10 +17,9 @@ public:
 	int capacity{};
 	int available_seats{};
 	// methods
-	Show();
-	~Show();
+	show();
 	void write() const;
 	// serializer and deserializer
-	friend void to_json(json& j, const Show& s);
-	friend void from_json(const json& j, Show& s);
+	friend void to_json(json& j, const show& s);
+	friend void from_json(const json& j, show& s);
 };

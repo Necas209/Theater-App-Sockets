@@ -5,16 +5,16 @@
 
 using json = nlohmann::json;
 
-enum struct CODE {
-	HELLO,
-	GET_LOCATIONS,
-	GET_GENRES,
-	GET_SHOWS,
-	BUY_TICKETS,
-	QUIT
+enum struct code {
+	hello,
+	get_locations,
+	get_genres,
+	get_shows,
+	buy_tickets,
+	quit
 };
 
-extern const std::map<CODE, const char*> codename;
+extern const std::map<code, const char*> codename;
 /**
 * Type of Message:
 *
@@ -31,16 +31,15 @@ extern const std::map<CODE, const char*> codename;
 *	"content": "", // or [ "Vila Real", "Fafe" ]
 * }
 */
-class Message final
+class message final
 {
 public:
 	static constexpr char fmt_str[] = "%Y-%m-%d %H:%M:%S";
-	CODE code{};
+	code code{};
 	std::string content;
 	tm stamp{};
-	Message();
-	Message(CODE code, const std::string& content);
-	~Message();
-	friend void to_json(json& j, const Message& m);
-	friend void from_json(const json& j, Message& m);
+	message();
+	message(enum code code, const std::string& content);
+	friend void to_json(json& j, const message& m);
+	friend void from_json(const json& j, message& m);
 };

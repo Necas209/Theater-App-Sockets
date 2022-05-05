@@ -1,15 +1,16 @@
 #pragma once
+#include <iostream>
 #include <string>
 #include <list>
 #include <set>
 #include <regex>
 #include <WinSock2.h>
 #include "Message.h"
-#include "Show.h"
+#include "show.h"
 
 #pragma comment(lib, "ws2_32.lib")
 
-extern std::list<Show> shows;
+extern std::list<show> shows;
 
 /**
  * @brief Main server call function

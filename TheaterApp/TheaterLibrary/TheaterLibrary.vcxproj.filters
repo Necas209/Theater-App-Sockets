@@ -18,24 +18,24 @@
     <ClInclude Include="json.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Show.h">
+    <ClInclude Include="theater.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Theater.h">
+    <ClInclude Include="message.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Message.h">
+    <ClInclude Include="show.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Show.cpp">
+    <ClCompile Include="show.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Theater.cpp">
+    <ClCompile Include="theater.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Message.cpp">
+    <ClCompile Include="message.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

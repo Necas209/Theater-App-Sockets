@@ -570,14 +570,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="json.hpp" />
-    <ClInclude Include="Message.h" />
-    <ClInclude Include="Show.h" />
-    <ClInclude Include="Theater.h" />
+    <ClInclude Include="message.h" />
+    <ClInclude Include="show.h" />
+    <ClInclude Include="theater.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Message.cpp" />
-    <ClCompile Include="Show.cpp" />
-    <ClCompile Include="Theater.cpp" />
+    <ClCompile Include="message.cpp" />
+    <ClCompile Include="show.cpp" />
+    <ClCompile Include="theater.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,6 +1,6 @@
 #include "utils.h"
 
-std::list<Show> shows;
+std::list<show> shows;
 
 bool validate_ip(const std::string& ip_address)
 {
@@ -12,20 +12,20 @@ bool validate_ip(const std::string& ip_address)
 int pick_location(const SOCKET& server_socket, std::string& location)
 {
 	// Send request for available locations
-	const json j = Message(CODE::GET_LOCATIONS, "");
-	const auto message = j.dump();
-	int ret_val = send(server_socket, message.data(), message.length() + 1, 0);
+	const json j = message(code::get_locations, "");
+	const auto msg = j.dump();
+	int ret_val = send(server_socket, msg.data(), static_cast<int>(msg.length()) + 1, 0);
 	if (ret_val <= 0) return SOCKET_ERROR;
 	// Receive available locations
 	char reply[2000];
 	ret_val = recv(server_socket, reply, 2000, 0);
 	if (ret_val <= 0) return SOCKET_ERROR;
 	// Parse response
-	auto msg = json::parse(reply).get<Message>();
+	auto msg2 = json::parse(reply).get<message>();
 	std::set<std::string> locations;
-	json::parse(msg.content).get_to(locations);
+	json::parse(msg2.content).get_to(locations);
 	// Pick location
-	const auto n = locations.size();
+	const auto n = static_cast<int>(locations.size());
 	int option = 0;
 	do {
 		std::cout << "Available locations:\n";
@@ -42,20 +42,20 @@ int pick_location(const SOCKET& server_socket, std::string& location)
 int pick_genre(const SOCKET& server_socket, const std::string& location, std::string& genre)
 {
 	// Send request for available genres
-	const json j = Message(CODE::GET_GENRES, location);
-	const auto message = j.dump();
-	int ret_val = send(server_socket, message.data(), message.length() + 1, 0);
+	const json j = message(code::get_genres, location);
+	const auto msg = j.dump();
+	int ret_val = send(server_socket, msg.data(), static_cast<int>(msg.length()) + 1, 0);
 	if (ret_val <= 0) return SOCKET_ERROR;
 	// Receive available genres
 	char reply[2000];
 	ret_val = recv(server_socket, reply, 2000, 0);
 	if (ret_val <= 0) return SOCKET_ERROR;
 	// Parse response
-	auto msg = json::parse(reply).get<Message>();
+	auto msg2 = json::parse(reply).get<message>();
 	std::set<std::string> genres;
-	json::parse(msg.content).get_to(genres);
+	json::parse(msg2.content).get_to(genres);
 	// Pick genre
-	const auto n = genres.size();
+	const auto n = static_cast<int>(genres.size());
 	int option = 0;
 	do {
 		std::cout << "Available genres:\n";
@@ -79,12 +79,12 @@ std::pair<int, int> pick_show()
 	}
 	// Pick show from available shows
 	std::cout << "Available shows: \n";
-	std::ranges::for_each(shows, [](const Show& s) { s.write(); std::cout << '\n'; });
+	std::ranges::for_each(shows, [](const show& s) { s.write(); std::cout << '\n'; });
 	int id;
 	std::cout << "Choose show (id): ";
 	(std::cin >> id).ignore();
 	const auto it = std::ranges::find_if(shows, 
-		[&](const Show& s) { return s.id == id; });
+		[&](const show& s) { return s.id == id; });
 	if (it == shows.end())
 	{
 		std::cout << "No show with id " << id << " is available.\n";
@@ -97,7 +97,8 @@ std::pair<int, int> pick_show()
 	(std::cin >> no_tickets).ignore();
 	if (no_tickets <= 0)
 	{
-		std::cout << "Invalid number of tickets.\n";
+		if (no_tickets < 0)
+			std::cout << "Invalid number of tickets.\n";
 		return show_info;
 	}
 	if (no_tickets > (*it).available_seats)
@@ -120,16 +121,16 @@ int buy_tickets(const SOCKET& server_socket)
 	ret_val = pick_genre(server_socket, location, genre);
 	if (ret_val < 0) return ret_val;
 	// Ask for shows
-	const json j = Message(CODE::GET_SHOWS, json{ {"location", location},
+	const json j = message(code::get_shows, json{ {"location", location},
 							   {"genre", genre} }.dump());
 	auto s = j.dump();
-	ret_val = send(server_socket, s.data(), s.length() + 1, 0);
+	ret_val = send(server_socket, s.data(), static_cast<int>(s.length()) + 1, 0);
 	if (ret_val <= 0) return SOCKET_ERROR;
 	// Parse response and get shows
 	char reply[2000];
 	ret_val = recv(server_socket, reply, 2000, 0);
 	if (ret_val <= 0) return SOCKET_ERROR;
-	auto msg = json::parse(reply).get<Message>();
+	auto msg = json::parse(reply).get<message>();
 	json::parse(msg.content).get_to(shows);
 	// Pick show
 	auto [id, no_tickets] = pick_show();
@@ -139,10 +140,10 @@ int buy_tickets(const SOCKET& server_socket)
 	}
 	// Send show/ticket info
 	shows.clear(); // Make sure shows is cleared
-	const json k = Message(CODE::BUY_TICKETS, json{ {"id", id},
+	const json k = message(code::buy_tickets, json{ {"id", id},
 							   {"no_tickets", no_tickets} }.dump());
 	s = k.dump();
-	ret_val = send(server_socket, s.data(), s.length() + 1, 0);
+	ret_val = send(server_socket, s.data(), static_cast<int>(s.length()) + 1, 0);
 	if (ret_val <= 0) return SOCKET_ERROR;
 	return 0;
 }
@@ -157,7 +158,7 @@ int main_call(const SOCKET& server_socket)
 		closesocket(server_socket);
 		return ret_val;
 	}
-	const auto msg = json::parse(reply).get<Message>();
+	const auto msg = json::parse(reply).get<message>();
 	std::cout << msg.content << "\n\n";
 	// Main menu
 	while (ret_val != SOCKET_ERROR)
@@ -196,15 +197,15 @@ int quit_call(const SOCKET& server_socket)
 	if (option == "y")
 	{
 		// Send request to end call
-		const json j = Message(CODE::QUIT, "QUIT");
+		const json j = message(code::quit, "QUIT");
 		const auto s = j.dump();
-		int ret_val = send(server_socket, s.data(), s.length() + 1, 0);
+		int ret_val = send(server_socket, s.data(), static_cast<int>(s.length()) + 1, 0);
 		if (ret_val <= 0) return SOCKET_ERROR;
 		// Receive response to end call
 		char reply[2000];
 		ret_val = recv(server_socket, reply, 2000, 0);
 		if (ret_val <= 0) return SOCKET_ERROR;
-		const auto msg = json::parse(reply).get<Message>();
+		const auto msg = json::parse(reply).get<message>();
 		std::cout << msg.content << '\n';
 		return -1;
 	}

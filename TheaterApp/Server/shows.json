@@ -34,7 +34,7 @@
         "name": "Teatro de Fafe",
         "shows": [
             {
-                "available_seats": 29,
+                "available_seats": 19,
                 "capacity": 80,
                 "datetime": "Sun Aug 08 12:30:00 2022",
                 "genre": "Tragicomedy",
@@ -42,7 +42,7 @@
                 "name": "Rosencrantz and Guildenstern Are Dead"
             },
             {
-                "available_seats": 50,
+                "available_seats": 25,
                 "capacity": 80,
                 "datetime": "Sun Aug 08 12:30:00 2024",
                 "genre": "Tragedy",
@@ -64,7 +64,7 @@
         "name": "Teatro Municipal de Vila Real",
         "shows": [
             {
-                "available_seats": 26,
+                "available_seats": 23,
                 "capacity": 80,
                 "datetime": "Sun Aug 08 12:30:00 2023",
                 "genre": "Comedy",

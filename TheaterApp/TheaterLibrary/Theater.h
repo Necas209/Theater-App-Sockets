@@ -1,18 +1,17 @@
 #pragma once
 #include <list>
-#include "Show.h"
+#include "show.h"
 
-class Theater final
+class theater final
 {
 public:
 	// attributes
 	std::string name;
 	std::string location;
-	std::list<Show> shows;
+	std::list<show> shows;
 	// methods
-	Theater();
-	~Theater();
+	theater();
 	// serializer and deserializer
-	friend void to_json(json& j, const Theater& t);
-	friend void from_json(const json& j, Theater& t);
+	friend void to_json(json& j, const theater& t);
+	friend void from_json(const json& j, theater& t);
 };

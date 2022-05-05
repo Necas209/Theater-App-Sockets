@@ -8,13 +8,13 @@ int main()
 	WSADATA wsa;
 	SetConsoleCP(CP_UTF8);
 	// Initialise winsock
-	std::cout << "\nInitialising Winsock...";
+	std::cout << "\nInitializing Winsock...";
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
 	{
 		std::cerr << "Failed. Error Code : " << WSAGetLastError() << '\n';
 		return 1;
 	}
-	std::cout << "Initialised.\n";
+	std::cout << "Initialized.\n";
 	// Create a socket
 	const SOCKET server_socket = socket(AF_INET, SOCK_STREAM, 0);
 	if (server_socket == INVALID_SOCKET)

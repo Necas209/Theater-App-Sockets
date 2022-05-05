@@ -1,14 +1,9 @@
-#include "Theater.h"
+#include "theater.h"
 
-Theater::Theater()
+theater::theater()
 = default;
 
-Theater::~Theater()
-{
-	shows.clear();
-}
-
-void to_json(json & j, const Theater & t)
+void to_json(json & j, const theater & t)
 {
 	j = json{ {"name", t.name},
 		{"location", t.location},
@@ -16,7 +11,7 @@ void to_json(json & j, const Theater & t)
 	};
 }
 
-void from_json(const json & j, Theater & t)
+void from_json(const json & j, theater & t)
 {
 	j.at("name").get_to(t.name);
 	j.at("location").get_to(t.location);
