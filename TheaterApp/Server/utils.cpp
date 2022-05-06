@@ -141,7 +141,7 @@ int buy_tickets(const SOCKET& client_socket, message& msg)
 	if (id != -1 && no_tickets != -1)
 	{
 		// Update client's seen shows
-		clients[ip_addr].shows_seen.push_back(id);
+		clients[ip_addr].shows_seen.emplace_back(id, no_tickets);
 		// Update available seats
 		const auto show_it = std::ranges::find_if((*it).shows,
 			[&](const show& s) { return s.id == id; });

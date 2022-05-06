@@ -9,7 +9,7 @@ class client final
 {
 public:
 	std::string ip_addr;
-	std::list<int> shows_seen;
+	std::list<std::pair<int, int>> shows_seen;
 	client();
 	explicit client(const std::string& ip_addr);
 	bool has_seen(int id);

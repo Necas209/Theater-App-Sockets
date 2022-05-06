@@ -11,7 +11,7 @@ client::client(const std::string& ip_addr)
 bool client::has_seen(const int id)
 {
 	const auto it = std::ranges::find_if(shows_seen,
-		[&](const int show_id) { return show_id == id; });
+		[&](const auto& p) { return p.first == id; });
 	return it != shows_seen.end();
 }
 
