@@ -10,7 +10,7 @@ theater_log::theater_log(const message& msg, const enum sender s, const std::str
 std::string log_path(const theater_log & l)
 {
 	std::ostringstream ss;
-	ss << R"(.\theater_logs\)" << std::put_time(&l.msg.stamp, "%Y-%m-%d") << ".Log";
+	ss << R"(.\theater_logs\)" << std::put_time(&l.msg.stamp, "%Y-%m-%d") << ".log";
 	return ss.str();
 }
 
