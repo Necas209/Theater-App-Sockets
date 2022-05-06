@@ -1,11 +1,10 @@
 #pragma once
-#include <iostream>
 #include <string>
 #include <list>
 #include <set>
 #include <regex>
 #include <WinSock2.h>
-#include "Message.h"
+#include "message.h"
 #include "show.h"
 
 #pragma comment(lib, "ws2_32.lib")

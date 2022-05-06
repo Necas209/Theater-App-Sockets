@@ -1,7 +1,6 @@
 #pragma once
 #include <set>
 #include <mutex>
-#include <filesystem>
 #include <WinSock2.h>
 #include <WS2tcpip.h>
 #include "theater.h"

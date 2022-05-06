@@ -8,11 +8,6 @@ client::client(const std::string& ip_addr)
 	this->ip_addr = ip_addr;
 }
 
-client::~client()
-{
-	shows_seen.clear();
-}
-
 bool client::has_seen(const int id)
 {
 	const auto it = std::ranges::find_if(shows_seen,

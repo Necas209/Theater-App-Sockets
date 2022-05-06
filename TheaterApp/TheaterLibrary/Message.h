@@ -39,7 +39,7 @@ public:
 	std::string content;
 	tm stamp{};
 	message();
-	message(enum code code, const std::string& content);
+	message(::code code, const std::string& content);
 	friend void to_json(json& j, const message& m);
 	friend void from_json(const json& j, message& m);
 };

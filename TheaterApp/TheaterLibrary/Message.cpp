@@ -13,7 +13,7 @@ const std::map<code, const char*> codename
 message::message()
 = default;
 
-message::message(const enum code code, const std::string& content)
+message::message(const ::code code, const std::string& content)
 {
 	this->code = code;
 	this->content = content;
