@@ -3,6 +3,12 @@
 theater::theater()
 = default;
 
+theater::theater(const std::string & name, const std::string & location)
+{
+	this->name = name;
+	this->location = location;
+}
+
 void to_json(json & j, const theater & t)
 {
 	j = json{ {"name", t.name},
