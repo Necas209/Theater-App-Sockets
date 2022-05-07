@@ -75,7 +75,8 @@ int get_locations(const SOCKET& client_socket)
 	const auto s = k.dump();
 	const int ret_val = send(client_socket, s.data(), static_cast<int>(s.length()) + 1, 0);
 	log_message(msg, sender::server); // Log message
-	return ret_val;
+	if (ret_val <= 0) return SOCKET_ERROR;
+	return 0;
 }
 
 int get_genres(const SOCKET& client_socket, const std::string& location)
@@ -158,7 +159,7 @@ int buy_tickets(const SOCKET& client_socket, const std::string& content)
 			[&](const show& s) { return s.id == id; });
 		(*show_it).available_seats -= no_tickets;
 	}
-	return ret_val;
+	return 0;
 }
 
 int main_call(const SOCKET client_socket, const sockaddr_in client_addr)
@@ -178,7 +179,7 @@ int main_call(const SOCKET client_socket, const sockaddr_in client_addr)
 	int ret_val = send(client_socket, s.data(), static_cast<int>(s.length()) + 1, 0);
 	log_message(m, sender::server); // Log message
 	std::cout << "Hello, client!\n\n";
-	while (ret_val > 0)
+	while (ret_val != SOCKET_ERROR)
 	{
 		// Receive next message and parse it
 		char reply[2000];
@@ -199,7 +200,8 @@ int main_call(const SOCKET client_socket, const sockaddr_in client_addr)
 			ret_val = buy_tickets(client_socket, msg.content);
 			break;
 		case code::quit:
-			ret_val = quit_call(client_socket);
+			quit_call(client_socket);
+			ret_val = SOCKET_ERROR;
 			break;
 		case code::hello:
 			std::cout << msg.content << "\n\n";

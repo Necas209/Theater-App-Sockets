@@ -2,7 +2,7 @@
 #include <thread>
 
 constexpr auto ds_test_port = static_cast<u_short>(68000);
-constexpr auto max_threads = 5;
+constexpr auto max_threads = 3;
 
 int main()
 {
