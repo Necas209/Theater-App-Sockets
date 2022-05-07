@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include <list>
+#include <map>
 #include "json.hpp"
 
 using json = nlohmann::json;
@@ -9,10 +9,12 @@ class client final
 {
 public:
 	std::string ip_addr;
-	std::list<std::pair<int, int>> shows_seen;
+	/**
+	 * @brief map of purchases: show id -> number of tickets
+	*/
+	std::map<int, int> shows_seen;
 	client();
 	explicit client(const std::string& ip_addr);
-	bool has_seen(int id);
 	friend void to_json(json& j, const client& c);
 	friend void from_json(const json& j, client& c);
 };

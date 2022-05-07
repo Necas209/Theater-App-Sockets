@@ -6,7 +6,6 @@ constexpr auto max_threads = 5;
 
 int main()
 {
-	//
 	SetConsoleOutputCP(CP_UTF8);
 	// Initialise winsock
 	WSADATA ws_data;
@@ -16,8 +15,6 @@ int main()
 		std::cerr << "\nWinsock setup failed! Error Code : " << WSAGetLastError() << '\n';
 		return 1;
 	}
-	read_theaters();
-	read_clients();
 	// Create a socket
 	const SOCKET listening = socket(AF_INET, SOCK_STREAM, 0);
 	if (listening == INVALID_SOCKET)
@@ -31,16 +28,23 @@ int main()
 	hint.sin_family = AF_INET;
 	hint.sin_port = htons(ds_test_port);
 	hint.sin_addr.S_un.S_addr = INADDR_ANY;
-	if (bind(listening, reinterpret_cast<sockaddr*>(&hint), sizeof(hint)) == SOCKET_ERROR)
+	if (bind(listening, reinterpret_cast<sockaddr*>(&hint), sizeof hint) == SOCKET_ERROR)
 	{
 		std::cerr << "\nAddress binding failed! Error Code : " << WSAGetLastError() << '\n';
 		return 1;
 	}
 	// Setup the socket for listening
-	listen(listening, SOMAXCONN);
+	if(listen(listening, SOMAXCONN) == SOCKET_ERROR)
+	{
+		std::cerr << "\nListening failed! Error Code : " << WSAGetLastError() << '\n';
+		return 1;
+	}
+	// Read data from files
+	read_theaters();
+	read_clients();
 	// Wait for connection
 	sockaddr_in client_addr{};
-	int client_size = sizeof(client_addr);
+	int client_size = sizeof client_addr;
 	SOCKET client_socket;
 	std::list<std::thread> threads;
 	int i = 0;

@@ -39,7 +39,7 @@ int main()
 	server_addr.sin_port = htons(ds_test_port);
 	inet_pton(server_addr.sin_family, ip_addr.data(), &server_addr.sin_addr.s_addr);
 	// Connect to remote server
-	if (connect(server_socket, reinterpret_cast<sockaddr*>(&server_addr), sizeof(server_addr)) == SOCKET_ERROR)
+	if (connect(server_socket, reinterpret_cast<sockaddr*>(&server_addr), sizeof server_addr) == SOCKET_ERROR)
 	{
 		std::cout << "Connection error\n";
 		return 1;

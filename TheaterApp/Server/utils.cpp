@@ -10,11 +10,24 @@ void log_message(const message& msg, const sender sender)
 {
 	// Lock access to logs
 	std::lock_guard guard(log_mutex);
+	// Get log file path
+	std::ostringstream ss;
+	ss << R"(.\theater_logs\)" << std::put_time(&msg.stamp, "%Y-%m-%d") << ".log";
 	// Log message
-	const theater_log l(msg, sender, ip_addr);
-	const std::string path = log_path(l);
-	std::ofstream ofs{ path, std::ios_base::app };
-	ofs << l;
+	std::ofstream ofs{ ss.str(), std::ios_base::app };
+	ofs << std::put_time(&msg.stamp, message::fmt_str) << ',';
+	switch (sender)
+	{
+	case sender::client:
+		ofs << "From:";
+		break;
+	case sender::server:
+		ofs << "To:";
+		break;
+	}
+	ofs << ip_addr << ',';
+	ofs << codename.at(msg.code) << ',';
+	ofs << msg.content << '\n';
 }
 
 void read_theaters(const char* filename)
@@ -65,10 +78,9 @@ int get_locations(const SOCKET& client_socket)
 	return ret_val;
 }
 
-int get_genres(const SOCKET& client_socket, message& msg)
+int get_genres(const SOCKET& client_socket, const std::string& location)
 {
 	// Find theater in given location
-	const auto& location = msg.content;
 	const auto it = std::ranges::find_if(theaters, [&](const theater& t)
 		{ return t.location == location; });
 	if (it == theaters.end()) return 0;
@@ -80,18 +92,19 @@ int get_genres(const SOCKET& client_socket, message& msg)
 	}
 	// Send genres to client
 	const json j = genres;
-	msg = message(code::get_genres, j.dump());
+	message msg(code::get_genres, j.dump());
 	const json k = msg;
 	const auto s = k.dump();
 	const int ret_val = send(client_socket, s.data(), static_cast<int>(s.length()) + 1, 0);
 	log_message(msg, sender::server); // Log message
-	return ret_val;
+	if (ret_val <= 0) return SOCKET_ERROR;
+	return 0;
 }
 
-int get_shows(const SOCKET& client_socket, message& msg, std::list<theater>::iterator& it)
+int get_shows(const SOCKET& client_socket, const std::string& content, std::list<theater>::iterator& it)
 {
 	// Parse message content for location and genre
-	json j = json::parse(msg.content);
+	json j = json::parse(content);
 	std::string location, genre;
 	j.at("location").get_to(location);
 	j.at("genre").get_to(genre);
@@ -103,36 +116,34 @@ int get_shows(const SOCKET& client_socket, message& msg, std::list<theater>::ite
 		std::list<show> shows;
 		std::ranges::copy_if((*it).shows, std::back_inserter(shows),
 			[&](const show& s) {
-				return s.available_seats > 0
-					&& s.genre == genre
-					&& !clients[ip_addr].has_seen(s.id);
-			});
+				return s.available_seats > 0 && s.genre == genre
+					&& !clients[ip_addr].shows_seen.contains(s.id); });
 		// Send shows to client
 		const json js = shows;
-		message message(code::get_shows, js.dump());
-		const json k = message;
+		message msg(code::get_shows, js.dump());
+		const json k = msg;
 		const auto s = k.dump();
 		const int ret_val = send(client_socket, s.data(), static_cast<int>(s.length()) + 1, 0);
-		log_message(message, sender::server); // Log message
+		log_message(msg, sender::server); // Log message
 		if (ret_val <= 0) return SOCKET_ERROR;
 	}
 	return 0;
 }
 
-int buy_tickets(const SOCKET& client_socket, message& msg)
+int buy_tickets(const SOCKET& client_socket, const std::string& content)
 {
 	// Lock access to shows
 	std::lock_guard guard(tickets_mutex);
 	// Send available shows to client
 	std::list<theater>::iterator it;
-	int ret_val = get_shows(client_socket, msg, it);
+	int ret_val = get_shows(client_socket, content, it);
 	if (ret_val < 0) return SOCKET_ERROR;
 	// Get ticket info from client
 	char reply[2000];
 	ret_val = recv(client_socket, reply, 2000, 0);
 	if (ret_val <= 0) return SOCKET_ERROR;
 	// Parse ticket info
-	msg = json::parse(reply).get<message>();
+	auto msg = json::parse(reply).get<message>();
 	log_message(msg, sender::client); // Log message
 	json j = json::parse(msg.content);
 	int id, no_tickets;
@@ -141,7 +152,7 @@ int buy_tickets(const SOCKET& client_socket, message& msg)
 	if (id != -1 && no_tickets != -1)
 	{
 		// Update client's seen shows
-		clients[ip_addr].shows_seen.emplace_back(id, no_tickets);
+		clients[ip_addr].shows_seen.emplace(id, no_tickets);
 		// Update available seats
 		const auto show_it = std::ranges::find_if((*it).shows,
 			[&](const show& s) { return s.id == id; });
@@ -158,7 +169,7 @@ int main_call(const SOCKET client_socket, const sockaddr_in client_addr)
 	ip_addr = std::string(buf);
 	if (!clients.contains(ip_addr))
 	{
-		clients.insert(std::make_pair(ip_addr, client(ip_addr)));
+		clients.emplace(ip_addr, client(ip_addr));
 	}
 	// Send HELLO message
 	message m(code::hello, "100 OK");
@@ -182,10 +193,10 @@ int main_call(const SOCKET client_socket, const sockaddr_in client_addr)
 			ret_val = get_locations(client_socket);
 			break;
 		case code::get_genres:
-			ret_val = get_genres(client_socket, msg);
+			ret_val = get_genres(client_socket, msg.content);
 			break;
 		case code::get_shows:
-			ret_val = buy_tickets(client_socket, msg);
+			ret_val = buy_tickets(client_socket, msg.content);
 			break;
 		case code::quit:
 			ret_val = quit_call(client_socket);
@@ -199,7 +210,7 @@ int main_call(const SOCKET client_socket, const sockaddr_in client_addr)
 	}
 	// Close the socket
 	closesocket(client_socket);
-	return ret_val;
+	return 0;
 }
 
 int quit_call(const SOCKET& client_socket)

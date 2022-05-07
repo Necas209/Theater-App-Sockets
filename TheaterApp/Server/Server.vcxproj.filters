@@ -21,9 +21,6 @@
     <ClInclude Include="utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="theater_log.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="client.cpp">
@@ -33,9 +30,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="utils.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="theater_log.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

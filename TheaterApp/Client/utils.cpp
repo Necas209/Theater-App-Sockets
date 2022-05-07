@@ -4,7 +4,7 @@ std::list<show> shows;
 
 bool validate_ip(const std::string& ip_address)
 {
-	const std::regex re("^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}"
+	const std::regex re(R"(^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3})"
 		"([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])$");
 	return std::regex_match(ip_address, re);
 }
