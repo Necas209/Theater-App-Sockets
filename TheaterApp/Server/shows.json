@@ -34,7 +34,7 @@
         "name": "Teatro de Fafe",
         "shows": [
             {
-                "available_seats": 19,
+                "available_seats": 15,
                 "capacity": 80,
                 "datetime": "Sun Aug 08 12:30:00 2022",
                 "genre": "Tragicomedy",
