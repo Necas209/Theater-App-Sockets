@@ -22,7 +22,7 @@ int main() {
     std::cout << "Socket created.\n";
     // Ask client for server IP address
     std::string ip_addr;
-    std::cout << "Server IP address: ";
+    std::cout << "server IP address: ";
     getline(std::cin, ip_addr);
     if (!validate_ip(ip_addr)) {
         ip_addr = "172.30.217.49";

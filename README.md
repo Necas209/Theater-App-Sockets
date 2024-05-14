@@ -11,7 +11,7 @@ All functions are properly documented using the _Doxygen_ syntax, in hopes no co
 ## Message Structure
 
 Messages sent by client and server are serialized in JSON and comprised of two fields:
-- The code, corresponding to an _enum_ defined in [message.h](TheaterApp/TheaterLibrary/message.h)
+- The code, corresponding to an _enum_ defined in [message.h](src/lib/message.h)
 - The content, which can be anything from an integer, to a string, or even a serialized object / list of objects
 
 ### Example of a message:
