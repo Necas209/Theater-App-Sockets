@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.28)
 project(theater-app)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 
 include_directories(src/client)
 include_directories(src/server)
