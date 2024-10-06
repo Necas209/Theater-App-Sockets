@@ -1,92 +1,110 @@
 [
   {
-	"location": "Braga",
-	"name": "Teatro de Braga",
-	"shows": [
-	  {
-		"available_seats": 40,
-		"capacity": 80,
-		"datetime": "Sun Aug 08 12:30:00 2024",
-		"genre": "Tragedy",
-		"id": 6,
-		"name": "Tragedy of Othello, The Moor of Venice"
-	  },
-	  {
-		"available_seats": 10,
-		"capacity": 80,
-		"datetime": "Sun Aug 08 12:30:00 2022",
-		"genre": "Comedy",
-		"id": 5,
-		"name": "The Tempest"
-	  },
-	  {
-		"available_seats": 20,
-		"capacity": 80,
-		"datetime": "Sun Aug 08 12:30:00 2023",
-		"genre": "Tragedy",
-		"id": 1,
-		"name": "Hamlet"
-	  }
-	]
+    "location": "Braga",
+    "name": "Teatro de Braga",
+    "shows": [
+      {
+        "available_seats": 40,
+        "capacity": 80,
+        "datetime": {
+          "since_epoch": 1723120200000000
+        },
+        "genre": "Tragedy",
+        "id": 6,
+        "name": "Tragedy of Othello, The Moor of Venice"
+      },
+      {
+        "available_seats": 10,
+        "capacity": 80,
+        "datetime": {
+          "since_epoch": 1659961800000000
+        },
+        "genre": "Comedy",
+        "id": 5,
+        "name": "The Tempest"
+      },
+      {
+        "available_seats": 20,
+        "capacity": 80,
+        "datetime": {
+          "since_epoch": 1691497800000000
+        },
+        "genre": "Tragedy",
+        "id": 1,
+        "name": "Hamlet"
+      }
+    ]
   },
   {
-	"location": "Fafe",
-	"name": "Teatro de Fafe",
-	"shows": [
-	  {
-		"available_seats": 15,
-		"capacity": 80,
-		"datetime": "Sun Aug 08 12:30:00 2022",
-		"genre": "Tragicomedy",
-		"id": 9,
-		"name": "Rosencrantz and Guildenstern Are Dead"
-	  },
-	  {
-		"available_seats": 25,
-		"capacity": 80,
-		"datetime": "Sun Aug 08 12:30:00 2024",
-		"genre": "Tragedy",
-		"id": 3,
-		"name": "Romeo & Juliet"
-	  },
-	  {
-		"available_seats": 26,
-		"capacity": 80,
-		"datetime": "Sun Aug 08 12:30:00 2023",
-		"genre": "Tragedy",
-		"id": 2,
-		"name": "Macbeth"
-	  }
-	]
+    "location": "Fafe",
+    "name": "Teatro de Fafe",
+    "shows": [
+      {
+        "available_seats": 15,
+        "capacity": 80,
+        "datetime": {
+          "since_epoch": 1659961800000000
+        },
+        "genre": "Tragicomedy",
+        "id": 9,
+        "name": "Rosencrantz and Guildenstern Are Dead"
+      },
+      {
+        "available_seats": 25,
+        "capacity": 80,
+        "datetime": {
+          "since_epoch": 1723120200000000
+        },
+        "genre": "Tragedy",
+        "id": 3,
+        "name": "Romeo & Juliet"
+      },
+      {
+        "available_seats": 26,
+        "capacity": 80,
+        "datetime": {
+          "since_epoch": 1691497800000000
+        },
+        "genre": "Tragedy",
+        "id": 2,
+        "name": "Macbeth"
+      }
+    ]
   },
   {
-	"location": "Vila Real",
-	"name": "Teatro Municipal de Vila Real",
-	"shows": [
-	  {
-		"available_seats": 23,
-		"capacity": 80,
-		"datetime": "Sun Aug 08 12:30:00 2023",
-		"genre": "Comedy",
-		"id": 7,
-		"name": "The Merchant of Venice"
-	  },
-	  {
-		"available_seats": 30,
-		"capacity": 80,
-		"datetime": "Sun Aug 08 12:30:00 2022",
-		"genre": "Tragedy",
-		"id": 4,
-		"name": "King Lear"
-	  },
-	  {
-		"available_seats": 50,
-		"capacity": 80,
-		"datetime": "Sun Aug 08 12:30:00 2024",
-		"genre": "Tragedy",
-		"id": 8,
-		"name": "Death of a Salesman"
-	  }
-	]
+    "location": "Vila Real",
+    "name": "Teatro Municipal de Vila Real",
+    "shows": [
+      {
+        "available_seats": 23,
+        "capacity": 80,
+        "datetime": {
+          "since_epoch": 1691497800000000
+        },
+        "genre": "Comedy",
+        "id": 7,
+        "name": "The Merchant of Venice"
+      },
+      {
+        "available_seats": 30,
+        "capacity": 80,
+        "datetime": {
+          "since_epoch": 1659961800000000
+        },
+        "genre": "Tragedy",
+        "id": 4,
+        "name": "King Lear"
+      },
+      {
+        "available_seats": 50,
+        "capacity": 80,
+        "datetime": {
+          "since_epoch": 1723120200000000
+        },
+        "genre": "Tragedy",
+        "id": 8,
+        "name": "Death of a Salesman"
+      }
+    ]
   }
 ]
